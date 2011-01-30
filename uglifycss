@@ -127,7 +127,7 @@ const MAX_LINE_LENGTH = 500;
 		pattern = /(^|\})(([^\{:])+:)+([^\{]*\{)/g;
 		content = content.replace(pattern, function (token) {
 			token = token
-				.replace(/:/g, "___YUICSSMIN_PSEUDOCLASSCOLON___")
+				.replace(/:/g, "___PSEUDOCLASSCOLON___")
 				.replace(/\\/g, "\\\\")
 				.replace(/\$/g, "\\$");
 			return token;
@@ -137,13 +137,14 @@ const MAX_LINE_LENGTH = 500;
 		content = content.replace(/\s+([!{};:>+\(\)\],])/g, "$1");
 
 		// bring back the colon
-		content = content.replace(/___YUICSSMIN_PSEUDOCLASSCOLON___/g, ":");
+		content = content.replace(/___PSEUDOCLASSCOLON___/g, ":");
 
 		// retain space for special IE6 cases
 		content = content.replace(/:first\-(line|letter)(\{|,)/g, ":first-$1 $2");
 
-		// no space after the end of a preserved comment
-		content = content.replace(/\*\/ /g, "*/");
+		// newlines before and after the end of a preserved comment
+		content = content.replace(/\s*\/\*/g, "___PRESERVED_NEWLINE___/*");
+		content = content.replace(/\*\/\s*/g, "*/___PRESERVED_NEWLINE___");
 
 		// if there is a @charset, then only allow one, and push to the top of the file.
 		content = content.replace(/^(.*)(@charset \"[^\"]*\";)/g, "$2$1");
@@ -255,6 +256,9 @@ const MAX_LINE_LENGTH = 500;
 			return preservedTokens[parseInt(f1, 10)];
 		});
 
+		// restore preserved newlines
+		content = content.replace(/___PRESERVED_NEWLINE___/g, '\n');
+
 		// return
 		return content;
 	}
@@ -286,7 +290,7 @@ const MAX_LINE_LENGTH = 500;
 			}
 		});
 
-		return uglies.join('\n');
+		return uglies.join('');
 	}
 
 	sys.print(main([]));
