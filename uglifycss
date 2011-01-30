@@ -355,7 +355,6 @@ var fs = require('fs'),
 
 				} catch (e) {
 					error('unable to read "' + param + '"');
-					content = '';
 				}
 
 				if (content.length) {
