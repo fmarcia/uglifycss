@@ -1,7 +1,7 @@
 #! /usr/bin/env nodejs
 
 /*
- * Translation of YUI CSS Compressor from Java to NodeJS
+ * Port of YUI CSS Compressor from Java to NodeJS
  * Author: Franck Marcia - https://github.com/fmarcia
  *
  * Based on parts of:
@@ -15,31 +15,34 @@
  *
  * changelog:
  * . effectively remove ! at the beginning of preserved comments
+ * . add newlines around preserved comments (optional)
+ * . parse simple variables blocks and expand variables (optional)
  */
 
-var fs = require('fs'), sys = require('sys');
-const MAX_LINE_LENGTH = 500;
+var fs = require('fs'),
+	sys = require('sys');
 
 (function () {
 
-	function compress(content) {
+	function compress(content, options) {
 
 		var startIndex,
-		    endIndex,
-		    comments = [],
-		    preservedTokens = [],
-		    token,
-		    len = content.length,
-		    pattern,
-		    quote,
-		    rgbcolors,
-		    hexcolor,
-		    placeholder,
-		    val,
-		    i,
-		    c,
-		    line = [],
-		    lines = [];
+			endIndex,
+			comments = [],
+			preservedTokens = [],
+			token,
+			len = content.length,
+			pattern,
+			quote,
+			rgbcolors,
+			hexcolor,
+			placeholder,
+			val,
+			i,
+			c,
+			line = [],
+			lines = [],
+			vars = {};
 
 		// collect all comment blocks...
 		while ((startIndex = content.indexOf("/*", startIndex)) >= 0) {
@@ -118,6 +121,27 @@ const MAX_LINE_LENGTH = 500;
 			content = content.replace("/*" + placeholder + "*/", "");
 		}
 
+		if (options.expandVars) {
+			// parse simple @variables blocks and remove them
+			pattern = /@variables\s*\{\s*([^\}]+)\s*\}/g;
+			content = content.replace(pattern, function (token, f1) {
+				pattern = /\s*([a-z0-9\-]+)\s*:\s*([^;\}]+)\s*/gi;
+				f1.replace(pattern, function(token, f1, f2) {
+					if (f1 && f2) {
+					vars[f1] = f2;
+					}
+					return '';
+				});
+				return '';
+			});
+
+			// replace var(x) with the value of x
+			pattern = /var\s*\(\s*([^\)]+)\s*\)/g;
+			content = content.replace(pattern, function (token, f1) {
+				return vars[f1] || 'none';
+			});
+		}
+
 		// normalize all whitespace strings to single spaces. Easier to work with that way.
 		content = content.replace(/\s+/g, " ");
 
@@ -143,8 +167,13 @@ const MAX_LINE_LENGTH = 500;
 		content = content.replace(/:first\-(line|letter)(\{|,)/g, ":first-$1 $2");
 
 		// newlines before and after the end of a preserved comment
-		content = content.replace(/\s*\/\*/g, "___PRESERVED_NEWLINE___/*");
-		content = content.replace(/\*\/\s*/g, "*/___PRESERVED_NEWLINE___");
+		if (options.cuteComments) {
+			content = content.replace(/\s*\/\*/g, "___PRESERVED_NEWLINE___/*");
+			content = content.replace(/\*\/\s*/g, "*/___PRESERVED_NEWLINE___");
+		// no space after the end of a preserved comment
+		} else {
+			content = content.replace(/\*\/\s*/g, '*/');
+		}
 
 		// if there is a @charset, then only allow one, and push to the top of the file.
 		content = content.replace(/^(.*)(@charset \"[^\"]*\";)/g, "$2$1");
@@ -228,11 +257,11 @@ const MAX_LINE_LENGTH = 500;
 		// some source control tools don't like it when files containing lines longer
 		// than, say 8000 characters, are checked in. The linebreak option is used in
 		// that case to split long lines after a specific column.
-		if (MAX_LINE_LENGTH >= 0) {
+		if (options.maxLineLen > 0) {
 			for (i = 0, len = content.length; i < len; i += 1) {
 				c = content.charAt(i);
 				line.push(c);
-				if (c === '}' && line.length > MAX_LINE_LENGTH) {
+				if (c === '}' && line.length > options.maxLineLen) {
 					lines.push(line.join(''));
 					line = [];
 				}
@@ -263,36 +292,82 @@ const MAX_LINE_LENGTH = 500;
 		return content;
 	}
 
-	function main(uglies) {
+	function error(msg) {
+		if (msg === 'usage') {
+		msg = 'Usage: uglifycss [options] css1 [css2] [...] > output\n' +
+			'options:\n' +
+			'--max-line-len x : add a newline every x characters; 0 means no newline; default: 5000\n' +
+			'--expand-vars : expand variables\n' +
+			'--cute-comments : add a newline around preserved comments';
+		}
+		sys.error(msg);
+		process.exit(1);
+	}
+
+	function par2var(param) {
+		return param.replace(/-(.)/g, function (unused, character) {
+			return character === '-' ? '' : character.toUpperCase();
+		});
+	}
+
+	function uglify() {
+
+		// options
+
+		var options = {
+				maxLineLen: 5000,
+				expandVars: false,
+				cuteComments: false
+			},
+			uglies = [],
+			varia,
+			content,
+			param,
+			argn = process.argv.length,
+			i;
 
 		// syntax
-		if (process.argv.length === 2) {
-			sys.error('Usage: uglifycss css1 [css2] [...] > output\n');
-			return '';
+
+		if (argn === 2) {
+			error('usage');
 		}
 
-		// process each file
-		process.argv.forEach(function (filename, index) {
+		// process params
 
-			var content;
+		for (i = 2; i < argn; i += 1) {
 
-			if (index > 1) {
+			param = process.argv[i];
+			varia = par2var(param);
+
+			if (typeof options[varia] === 'boolean') {
+				options[varia] = true;
+
+			} else if (typeof options[varia] !== 'undefined') {
+				if (i < argn - 1) {
+					options[varia] = parseInt(process.argv[i + 1], 10);
+					i += 1;
+				}
+
+			} else {
+
 				try {
-					content = fs.readFileSync(filename, 'utf8');
+					content = fs.readFileSync(param, 'utf8');
+
 				} catch (e) {
-					sys.error('unable to read "' + filename + '"');
+					error('unable to read "' + param + '"');
 					content = '';
 				}
+
 				if (content.length) {
-					content = compress(content);
+					content = compress(content, options);
 					uglies.push(content);
 				}
 			}
-		});
+		}
 
 		return uglies.join('');
 	}
 
-	sys.print(main([]));
+	sys.print(uglify());
 
 }());
