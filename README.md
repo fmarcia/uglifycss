@@ -6,6 +6,6 @@ Options:
 
 * `--max-line-len x` add a newline every x characters; 0 means no newline; default: 5000
 * `--expand-vars` expand variables
-* `--cute-comments` add a newline around preserved comments
+* `--cute-comments` preserve newlines within and around preserved comments
 
 PS: [a port to javascript](https://github.com/yui/yuicompressor/blob/master/ports/js/cssmin.js) is already available in the YUI Compressor repository.
