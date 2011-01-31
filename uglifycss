@@ -17,6 +17,7 @@
  * . effectively remove ! at the beginning of preserved comments
  * . add newlines around preserved comments (optional)
  * . parse simple variables blocks and expand variables (optional)
+ * . preserve newlines in preserved comments (optional)
  */
 
 var fs = require('fs'),
@@ -86,7 +87,11 @@ var fs = require('fs'),
 			// ! in the first position of the comment means preserve
 			// so push to the preserved tokens while stripping the !
 			if (token.charAt(0) === "!") {
-				preservedTokens.push(token.substring(1));
+				if (options.cuteComments) {
+					preservedTokens.push(token.substring(1));
+				} else {
+					preservedTokens.push(token.substring(1).replace(/[\r\n]/g, ''));
+				}
 				content = content.replace(placeholder,  "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___");
 				continue;
 			}
