@@ -5,7 +5,7 @@ Usage: `uglifycss [options] css1 [css2] [...] > output`
 Options:
 
 * `--max-line-len x` add a newline every x characters; 0 means no newline; default: 5000
-* `--expand-vars` expand variables (by default, `@variables` blocks are not expanded)
+* `--expand-vars` expand variables (by default, `var(x)`s are not expanded and `@variables` blocks are preserved)
 * `--cute-comments` preserve newlines within and around preserved comments (by default, newlines are removed from preserved comments)
 
 A [port to javascript](https://github.com/yui/yuicompressor/blob/master/ports/js/cssmin.js) is also available in the YUI Compressor repository.
