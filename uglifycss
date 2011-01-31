@@ -320,7 +320,7 @@ var fs = require('fs'),
 		// options
 
 		var options = {
-				maxLineLen: 5000,
+				maxLineLen: 0,
 				expandVars: false,
 				cuteComments: false
 			},
