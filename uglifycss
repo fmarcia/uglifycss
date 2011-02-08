@@ -1,4 +1,4 @@
-#! /usr/bin/env nodejs
+#! /usr/bin/env node
 
 /*
  * Port of YUI CSS Compressor from Java to NodeJS
