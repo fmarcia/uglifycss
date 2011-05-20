@@ -9,3 +9,10 @@ Options:
 * `--cute-comments` preserves newlines within and around preserved comments; by default, newlines are removed from preserved comments
 
 A [port to javascript](https://github.com/yui/yuicompressor/blob/master/ports/js/cssmin.js) is also available in the YUI Compressor repository.
+
+2 functions are available :
+
+* `processString(content, options)`
+* `processFiles(filenames, options)`
+
+See test.js for example.

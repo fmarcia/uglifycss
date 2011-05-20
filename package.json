@@ -1,0 +1,17 @@
+{
+	"name"    : "uglifycss",
+	"author"  : {
+		"name"  : "Franck Marcia",
+		"email" : "franck.marcia@gmail.com",
+		"url"   : "https://github.com/fmarcia"
+	},
+	"version" : "0.9",
+	"main"    : "./index.js",
+	"bin"     : {
+		"uglifycss" : "./uglifycss"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:fmarcia/UglifyCSS.git"
+	}
+}
