@@ -10,7 +10,7 @@ Options:
 
 A [port to javascript](https://github.com/yui/yuicompressor/blob/master/ports/js/cssmin.js) is also available in the YUI Compressor repository.
 
-2 functions are available :
+2 functions are provided:
 
 * `processString(content, options)`
 * `processFiles(filenames, options)`
