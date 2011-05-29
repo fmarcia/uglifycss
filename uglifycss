@@ -18,20 +18,12 @@
 
 var	sys = require('sys'),
 	uglifycss = require('uglifycss'),
-	OPTIONS = {
-		maxLineLen: 0,
-		expandVars: false,
-		cuteComments: false
-	},
-
 	uglies = [],
 	filename,
 	content,
 	params,
 	nFiles,
 	result;
-
-require('util').inspect(uglifycss, true);
 
 // Print usage
 
@@ -62,7 +54,7 @@ function parseArguments(argv) {
 		len = argv.length,
 		param,
 		params = {
-			options: OPTIONS,
+			options: uglifycss.defaultOptions,
 			files: []
 		};
 

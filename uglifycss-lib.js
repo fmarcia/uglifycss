@@ -19,6 +19,12 @@ var	sys = require('sys'),
 
 	uglifycss = module.exports = {
 
+		defaultOptions: {
+			maxLineLen: 0,
+			expandVars: false,
+			cuteComments: false
+		},
+
 		// Uglify a CSS string
 
 		processString: function(content, options) {
@@ -40,6 +46,8 @@ var	sys = require('sys'),
 				line = [],
 				lines = [],
 				vars = {};
+
+			options = options || uglifycss.defaultOptions;
 
 			// collect all comment blocks...
 			while ((startIndex = content.indexOf("/*", startIndex)) >= 0) {

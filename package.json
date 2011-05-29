@@ -5,7 +5,7 @@
 		"email" : "franck.marcia@gmail.com",
 		"url"   : "https://github.com/fmarcia"
 	},
-	"version" : "0.9",
+	"version" : "0.0.3",
 	"main"    : "./index.js",
 	"bin"     : {
 		"uglifycss" : "./uglifycss"
