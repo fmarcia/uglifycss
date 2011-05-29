@@ -1,17 +1,15 @@
 {
-	"name"    : "uglifycss",
-	"author"  : {
-		"name"  : "Franck Marcia",
-		"email" : "franck.marcia@gmail.com",
-		"url"   : "https://github.com/fmarcia"
-	},
-	"version" : "0.0.3",
-	"main"    : "./index.js",
-	"bin"     : {
-		"uglifycss" : "./uglifycss"
-	},
+	"author": "Franck Marcia <franck.marcia@gmail.com> (https://github.com/fmarcia)",
+	"name": "uglifycss",
+	"description": "Port of YUI CSS Compressor to NodeJS",
+	"version": "0.0.3",
+	"homepage": "https://github.com/fmarcia/UglifyCSS",
 	"repository": {
 		"type": "git",
-		"url": "git@github.com:fmarcia/UglifyCSS.git"
+		"url": "git://github.com/fmarcia/UglifyCSS.git"
+	},
+	"main": "./index.js",
+	"bin": {
+		"uglifycss" : "./uglifycss"
 	}
 }
