@@ -245,7 +245,7 @@ var	sys = require('sys'),
 					f5.toLowerCase() === f6.toLowerCase() &&
 					f7.toLowerCase() === f8.toLowerCase()
 				) {
-					return (f1 + f2 + f3 + f5 + f7).toLowerCase();
+					return (f1 + (f1 == ':' ? '' : ' ') + f2 + f3 + f5 + f7).toLowerCase();
 				} else {
 					return token.toLowerCase();
 				}
