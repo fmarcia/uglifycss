@@ -17,7 +17,7 @@
 
 
 var	sys = require('sys'),
-	uglifycss = require('uglifycss'),
+	uglifycss = require('./uglifycss-lib'),
 	options = {
 		maxLineLen: 0,
 		expandVars: false,
@@ -29,7 +29,7 @@ var	sys = require('sys'),
 		' */\n' +
 		'.class {\n' +
 		'	font-family : Helvetica Neue, Arial, Helvetica, \'Liberation Sans\', FreeSans, sans-serif;\n' +
-		'	color : #000000;\n' +
+		'	border: 1px solid #000000;\n' +
 		'	margin: 0 0 0 0;\n' +
 		'	font-size : 12px;\n' +
 		'	font-weight :bold;\n' +

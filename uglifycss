@@ -1,20 +1,29 @@
 #! /usr/bin/env node
 
-/*
+/**
  * UglifyCSS
- * Port of YUI CSS Compressor from Java to NodeJS
+ * Port of YUI CSS Compressor to NodeJS
  * Author: Franck Marcia - https://github.com/fmarcia
- *
- * Based on parts of:
- * YUI Compressor
- * Author: Julien Lecomte - http://www.julienlecomte.net/
- * Author: Isaac Schlueter - http://foohack.com/
+ */
+
+/**
+ * cssmin.js
  * Author: Stoyan Stefanov - http://phpied.com/
- * Copyright (c) 2009 Yahoo! Inc. All rights reserved.
+ * This is a JavaScript port of the CSS minification tool
+ * distributed with YUICompressor, itself a port
+ * of the cssmin utility by Isaac Schlueter - http://foohack.com/
+ * Permission is hereby granted to use the JavaScript version under the same
+ * conditions as the YUICompressor (original YUICompressor note below).
+ */
+
+/**
+ * YUI Compressor
+ * http://developer.yahoo.com/yui/compressor/
+ * Author: Julien Lecomte - http://www.julienlecomte.net/
+ * Copyright (c) 2011 Yahoo! Inc. All rights reserved.
  * The copyrights embodied in the content of this file are licensed
  * by Yahoo! Inc. under the BSD (revised) open source license.
  */
-
 
 var	sys = require('sys'),
 	uglifycss = require('uglifycss'),
@@ -31,9 +40,10 @@ function usage() {
 	sys.error(
 		'Usage: uglifycss [options] file1.css [file2.css [...]] > output\n' +
 		'options:\n' +
-		'--max-line-len x : add a newline every x characters; 0 means no newline; default: 5000\n' +
-		'--expand-vars : expand variables\n' +
-		'--cute-comments : add a newline around preserved comments'
+		'--max-line-len x  add a newline every x characters; 0 means no newline; default: 5000\n' +
+		'--expand-vars     expand variables\n' +
+		'--ugly-comments   remove newlines within preserved comments\n' +
+		'--cute-comments   preserve newlines within and around preserved comments'
 	);
 }
 
