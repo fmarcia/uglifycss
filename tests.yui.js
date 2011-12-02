@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 
 // var stuff
-var	sys = require( 'sys' ),
+var	util = require( 'util' ),
 	fs = require( 'fs' ),
 	uglifycss = require( './uglifycss-lib' ),
 	path = '../yuicompressor/tests',
@@ -26,7 +26,7 @@ for ( i in files ) {
 	if ( /\.css$/.test( file ) ) {
 		ugly = uglifycss.processFiles( [ file ] );
 		if ( trim( ugly ) != trim( fs.readFileSync( file + '.min' ) ) ) {
-			sys.puts( file + ': FAILED' );
+			util.puts( file + ': FAILED' );
 			fs.writeFile( file + '.FAILED', ugly );
 			failed += 1;
 		}
@@ -36,7 +36,7 @@ for ( i in files ) {
 
 // report total
 if ( failed ) {
-	sys.puts( total + ' tests, ' + failed + ' failed' );
+	util.puts( total + ' tests, ' + failed + ' failed' );
 } else {
-	sys.puts( total + ' tests, no failure!' );
+	util.puts( total + ' tests, no failure!' );
 }

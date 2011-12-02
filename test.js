@@ -16,7 +16,7 @@
  */
 
 
-var	sys = require('sys'),
+var	util = require('util'),
 	uglifycss = require('./uglifycss-lib'),
 	options = {
 		maxLineLen: 0,
@@ -39,5 +39,5 @@ var	sys = require('sys'),
 		'}\n';
 
 
-sys.print(uglifycss.processString(content, options) + '\n');
+util.print(uglifycss.processString(content, options) + '\n');
 //uglifycss.processFiles(filenames, options) + '\n');

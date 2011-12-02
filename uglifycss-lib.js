@@ -23,7 +23,7 @@
  * by Yahoo! Inc. under the BSD (revised) open source license.
  */
 
-var	sys = require('sys'),
+var	util = require('util'),
 	fs = require('fs'),
 
 	uglifycss = module.exports = {
@@ -449,7 +449,7 @@ var	sys = require('sys'),
 						uglies.push(uglifycss.processString(content, options));
 					}
 				} catch (e) {
-					sys.error('unable to process "' + filename + '" with ' + e);
+					util.error('unable to process "' + filename + '" with ' + e);
 					process.exit(1);
 				}
 			}
