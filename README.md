@@ -19,3 +19,5 @@ A [port to javascript](https://github.com/yui/yuicompressor/blob/master/ports/js
 See test.js for example.
 
 UglifyCSS passes successfully the test suite of YUI compressor CSS.
+
+UglifyCSS is MIT licensed.
