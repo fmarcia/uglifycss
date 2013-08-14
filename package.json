@@ -3,6 +3,7 @@
 	"name": "uglifycss",
 	"description": "Port of YUI CSS Compressor to NodeJS",
 	"version": "0.0.6",
+	"license": "MIT",
 	"homepage": "https://github.com/fmarcia/UglifyCSS",
 	"repository": {
 		"type": "git",
