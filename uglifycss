@@ -27,7 +27,7 @@
  */
 
 var	util = require('util'),
-	uglifycss = require('uglifycss'),
+	uglifycss = require('./'),
 	uglies = [],
 	filename,
 	content,
