@@ -2,6 +2,7 @@
  * UglifyCSS
  * Port of YUI CSS Compressor to NodeJS
  * Author: Franck Marcia - https://github.com/fmarcia
+ * MIT licenced
  */
 
 /**
