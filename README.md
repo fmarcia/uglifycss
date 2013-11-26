@@ -9,7 +9,7 @@ Options:
 * `--ugly-comments` removes newlines within preserved comments; by default, newlines are preserved
 * `--cute-comments` preserves newlines within and around preserved comments
 
-A [port to javascript](https://github.com/yui/yuicompressor/blob/master/ports/js/cssmin.js) is also available in the YUI Compressor repository.
+A [port to JavaScript](https://github.com/yui/ycssmin) is also available in the YUI Compressor repository.
 
 2 functions are provided:
 
