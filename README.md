@@ -1,6 +1,31 @@
-UglifyCSS is a port of [YUI Compressor](https://github.com/yui/yuicompressor), for its CSS part, to [NodeJS](http://nodejs.org). Its name is a reference to the awesome [UglifyJS](https://github.com/mishoo/UglifyJS) but UglifyCSS is not a CSS parser. Like YUI CSS Compressor, it applies many regexp replacements.
+[<img src="https://nodei.co/npm/uglifycss.png?downloads=true" alt="">](https://npmjs.org/package/uglifycss)
 
-Usage: `uglifycss [options] css1 [css2] [...] > output`
+UglifyCSS is a port of [YUI Compressor](https://github.com/yui/yuicompressor) to [NodeJS](http://nodejs.org) for its CSS part. Its name is a reference to the awesome [UglifyJS](https://github.com/mishoo/UglifyJS) but UglifyCSS is not a CSS parser. Like YUI CSS Compressor, it applies many regexp replacements. Note that a [port to JavaScript](https://github.com/yui/ycssmin) is also available in the YUI Compressor repository.
+
+UglifyCSS passes successfully the test suite of YUI compressor CSS.
+
+### Installation
+
+For a command line usage:
+```sh
+$ npm install uglifycss -g
+```
+
+For API usage:
+```sh
+$ npm install uglifycss
+```
+
+From Github:
+```sh
+$ git clone git://github.com/fmarcia/UglifyCSS.git
+```
+
+### Command line
+
+```sh
+$ uglifycss [options] css1 [css2] [...] > output
+```
 
 Options:
 
@@ -9,15 +34,37 @@ Options:
 * `--ugly-comments` removes newlines within preserved comments; by default, newlines are preserved
 * `--cute-comments` preserves newlines within and around preserved comments
 
-A [port to JavaScript](https://github.com/yui/ycssmin) is also available in the YUI Compressor repository.
+
+### API
 
 2 functions are provided:
 
-* `processString( content, options )`
-* `processFiles( [ filename1, ... ], options )`
+* `processString( content, options )` to process a given string
+* `processFiles( [ filename1, ... ], options )` to process the concatenation of given files
+ 
+Options are identical to the command line:
+* `<int> maxLineLen` for `--max-line-len n`
+* `<bool> expandVars` for `--expand-vars`
+* `<bool> uglyComments` for `--ugly-comments`
+* `<bool> cuteComments` for `--cute-comments`
 
-See test.js for example.
+Both functions return uglified css.
 
-UglifyCSS passes successfully the test suite of YUI compressor CSS.
+#### Example
+
+```js
+var uglifycss = require('uglifycss');
+
+var uglified = uglifycss.processFile(
+    [ 'file1', 'file2' ],
+    { maxLineLen: 500, expandVars: true }
+);
+
+console.log(uglified);
+```
+
+See also [test.js](https://github.com/fmarcia/UglifyCSS/blob/master/test.js).
+
+### License
 
 UglifyCSS is MIT licensed.
