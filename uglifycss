@@ -29,6 +29,7 @@
 var	util = require('util'),
 	uglifycss = require('./'),
 	uglies = [],
+	stdin = process.stdin,
 	filename,
 	content,
 	params,
@@ -108,21 +109,19 @@ if (nFiles) {
 	util.print(uglifycss.processFiles(params.files, params.options));
 
 // . usage
-} else {
+} else if (stdin.isTTY) {
 	usage();
-}
 
-/*
 // . stdin
 } else {
-	stdin = process.openStdin();
-	stdin.setEncoding("utf8");
-	content = '';
-	stdin.on('data', function(part) {
-		content += part;
+
+    content = '';
+
+	stdin.on('data', function (part) {
+	    content += part;
 	});
-	stdin.on('end', function() {
-		util.print(uglifycss.processString(content, params.options));
+
+	stdin.on('end', function () {
+	    util.print(uglifycss.processString(content, params.options));
 	});
 }
-*/
