@@ -1,5 +1,3 @@
-[<img src="https://nodei.co/npm/uglifycss.png?downloads=true" alt="">](https://npmjs.org/package/uglifycss)
-
 UglifyCSS is a port of [YUI Compressor](https://github.com/yui/yuicompressor) to [NodeJS](http://nodejs.org) for its CSS part. Its name is a reference to the awesome [UglifyJS](https://github.com/mishoo/UglifyJS) but UglifyCSS is not a CSS parser. Like YUI CSS Compressor, it applies many regexp replacements. Note that a [port to JavaScript](https://github.com/yui/ycssmin) is also available in the YUI Compressor repository.
 
 UglifyCSS passes successfully the test suite of YUI compressor CSS.
@@ -41,7 +39,7 @@ Options:
 
 * `processString( content, options )` to process a given string
 * `processFiles( [ filename1, ... ], options )` to process the concatenation of given files
- 
+
 Options are identical to the command line:
 * `<int> maxLineLen` for `--max-line-len n`
 * `<bool> expandVars` for `--expand-vars`
