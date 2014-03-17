@@ -53,7 +53,7 @@ Both functions return uglified css.
 ```js
 var uglifycss = require('uglifycss');
 
-var uglified = uglifycss.processFile(
+var uglified = uglifycss.processFiles(
     [ 'file1', 'file2' ],
     { maxLineLen: 500, expandVars: true }
 );
