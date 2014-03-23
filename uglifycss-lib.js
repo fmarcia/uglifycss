@@ -389,8 +389,15 @@ var	util = require('util'),
 			// shorter opacity IE filter
 			content = content.replace(/progid:DXImageTransform\.Microsoft\.Alpha\(Opacity=/gi, "alpha(opacity=");
 
+			// Find a fraction that is used for Opera's -o-device-pixel-ratio query
+	        // Add token to add the "\" back in later
+	        content = content.replace(/\(([\-A-Za-z]+):([0-9]+)\/([0-9]+)\)/g, "($1:$2___YUI_QUERY_FRACTION___$3)");
+
 			// remove empty rules.
 			content = content.replace(/[^\};\{\/]+\{\}/g, "");
+
+			// Add "\" back to fix Opera -o-device-pixel-ratio query
+	        content = content.replace(/___YUI_QUERY_FRACTION___/g, "/");
 
 			// some source control tools don't like it when files containing lines longer
 			// than, say 8000 characters, are checked in. The linebreak option is used in
