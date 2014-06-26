@@ -381,7 +381,7 @@ var	util = require('util'),
 
 			// put the space back in some cases, to support stuff like
 			// @media screen and (-webkit-min-device-pixel-ratio:0){
-			content = content.replace(/\band\(/g, "and (");
+			content = content.replace(/\band\(/gi, "and (");
 
 			// remove the spaces after the things that should not have spaces after them.
 			content = content.replace(/([!{}:;>+\(\[,])\s+/g, "$1");
