@@ -329,6 +329,18 @@ var	util = require('util'),
 				content = content.replace(/\*\/\s*/g, '*/');
 			}
 
+			// If there are multiple @charset directives, push them to the top of the file.
+			pattern = /^(.*)(@charset)( "[^"]*";)/gi;
+			content = content.replace(pattern, function (token, f1, f2, f3) {
+				return f2.toLowerCase() + f3 + f1;
+			});
+
+			// When all @charset are at the top, remove the second and after (as they are completely ignored).
+			pattern = /^((\s*)(@charset)( [^;]+;\s*))+/gi;
+			content = content.replace(pattern, function (token, f1, f2, f3, f4) {
+				return f2 + f3.toLowerCase() + f4;
+			});
+
 			// lowercase some popular @directives (@charset is done right above)
 			pattern = /@(font-face|import|(?:-(?:atsc|khtml|moz|ms|o|wap|webkit)-)?keyframe|media|page|namespace)/gi;
 			content = content.replace(pattern, function (token, f1) {
