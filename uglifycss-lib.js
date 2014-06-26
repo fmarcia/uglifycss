@@ -380,6 +380,19 @@ var	util = require('util'),
 			// Shorten colors from #AABBCC to #ABC.
 			content = uglifycss.compressHexColors(content);
 
+			// Replace #f00 -> red
+			content = content.replace(/(:|\s)(#f00)(;|})/g, "$1red$3");
+
+			// Replace other short color keywords
+			content = content.replace(/(:|\s)(#000080)(;|})/g, "$1navy$3");
+			content = content.replace(/(:|\s)(#808080)(;|})/g, "$1gray$3");
+			content = content.replace(/(:|\s)(#808000)(;|})/g, "$1olive$3");
+			content = content.replace(/(:|\s)(#800080)(;|})/g, "$1purple$3");
+			content = content.replace(/(:|\s)(#c0c0c0)(;|})/g, "$1silver$3");
+			content = content.replace(/(:|\s)(#008080)(;|})/g, "$1teal$3");
+			content = content.replace(/(:|\s)(#ffa500)(;|})/g, "$1orange$3");
+			content = content.replace(/(:|\s)(#800000)(;|})/g, "$1maroon$3");
+
 			// border: none -> border:0
 			pattern = /(border|border-top|border-right|border-bottom|border-left|outline|background):none(;|\})/gi;
 			content = content.replace(pattern, function (token, f1, f2) {
