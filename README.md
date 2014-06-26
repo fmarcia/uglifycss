@@ -22,7 +22,7 @@ $ git clone git://github.com/fmarcia/UglifyCSS.git
 ### Command line
 
 ```sh
-$ uglifycss [options] css1 [css2] [...] > output
+$ uglifycss [options] [filename] [...] > output
 ```
 
 Options:
@@ -32,6 +32,7 @@ Options:
 * `--ugly-comments` removes newlines within preserved comments; by default, newlines are preserved
 * `--cute-comments` preserves newlines within and around preserved comments
 
+If no file name is specified, input is read from stdin.
 
 ### API
 
