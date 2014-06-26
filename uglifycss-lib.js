@@ -372,6 +372,9 @@ var	util = require('util'),
 					if (val < 16) {
 						hexcolor += "0";
 					}
+					if (val > 255) {
+						val = 255;
+					}
 					hexcolor += val.toString(16);
 				}
 				return hexcolor;
