@@ -390,7 +390,10 @@ var	util = require('util'),
 			content = content.replace(/;+\}/g, "}");
 
 			// replace 0(px,em,%) with 0.
-			content = content.replace(/([\s:])(0)(px|em|%|in|cm|mm|pc|pt|ex)/g, "$1$2");
+			content = content.replace(/(^|[^.0-9])(?:0?\.)?0(?:px|em|%|in|cm|mm|pc|pt|ex|deg|g?rad|m?s|k?hz)/gi, "$10");
+
+			// Replace x.0(px,em,%) with x(px,em,%).
+			content = content.replace(/([0-9])\.0(px|em|%|in|cm|mm|pc|pt|ex|deg|g?rad|m?s|k?hz| |;)/gi, "$1$2");
 
 			// replace 0 0 0 0; with 0.
 			content = content.replace(/:0 0 0 0(;|\})/g, ":0$1");
