@@ -329,9 +329,34 @@ var	util = require('util'),
 				content = content.replace(/\*\/\s*/g, '*/');
 			}
 
+			// lowercase some popular @directives (@charset is done right above)
+			pattern = /@(font-face|import|(?:-(?:atsc|khtml|moz|ms|o|wap|webkit)-)?keyframe|media|page|namespace)/gi;
+			content = content.replace(pattern, function (token, f1) {
+				return '@' + f1.toLowerCase();
+			});
+
+			// lowercase some more common pseudo-elements
+			pattern = /:(active|after|before|checked|disabled|empty|enabled|first-(?:child|of-type)|focus|hover|last-(?:child|of-type)|link|only-(?:child|of-type)|root|:selection|target|visited)/gi;
+			content = content.replace(pattern, function (token, f1) {
+				return ':' + f1.toLowerCase();
+			});
+
 			// if there is a @charset, then only allow one, and push to the top of the file.
 			content = content.replace(/^(.*)(@charset \"[^\"]*\";)/g, "$2$1");
 			content = content.replace(/^(\s*@charset [^;]+;\s*)+/g, "$1");
+
+			// lowercase some more common functions
+			pattern = /:(lang|not|nth-child|nth-last-child|nth-last-of-type|nth-of-type|(?:-(?:atsc|khtml|moz|ms|o|wap|webkit)-)[^\(]+)\(/gi;
+			content = content.replace(pattern, function (token, f1) {
+				return ':' + f1.toLowerCase() + '(';
+			});
+
+			// lower case some common function that can be values
+			// NOTE: rgb() isn't useful as we replace with #hex later, as well as and() is already done for us right after this
+			pattern = /([:,\( ]\s*)(attr|color-stop|from|rgba|to|url|(?:-(?:atsc|khtml|moz|ms|o|wap|webkit)-)?(?:calc|max|min|(?:repeating-)?(?:linear|radial)-gradient)|-webkit-gradient)/gi;
+			content = content.replace(pattern, function (token, f1, f2) {
+				return f1 + f2.toLowerCase();
+			});
 
 			// put the space back in some cases, to support stuff like
 			// @media screen and (-webkit-min-device-pixel-ratio:0){
