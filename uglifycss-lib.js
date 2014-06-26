@@ -360,7 +360,7 @@ var	util = require('util'),
 			content = content.replace(/^(\s*@charset [^;]+;\s*)+/g, "$1");
 
 			// lowercase some more common functions
-			pattern = /:(lang|not|nth-child|nth-last-child|nth-last-of-type|nth-of-type|(?:-(?:atsc|khtml|moz|ms|o|wap|webkit)-)[^\(]+)\(/gi;
+			pattern = /:(lang|not|nth-child|nth-last-child|nth-last-of-type|nth-of-type|(?:-(?:atsc|khtml|moz|ms|o|wap|webkit)-)?any)\(/gi;
 			content = content.replace(pattern, function (token, f1) {
 				return ':' + f1.toLowerCase() + '(';
 			});
