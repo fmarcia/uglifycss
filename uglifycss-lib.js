@@ -206,9 +206,7 @@ var	util = require('util'),
 				}
 				token = content.slice(startIndex + 2, endIndex);
 				comments.push(token);
-				content = content.slice(0, startIndex + 2)
-					+ "___PRESERVE_CANDIDATE_COMMENT_" + (comments.length - 1) + "___"
-					+ content.slice(endIndex);
+				content = content.slice(0, startIndex + 2) + "___PRESERVE_CANDIDATE_COMMENT_" + (comments.length - 1) + "___" + content.slice(endIndex);
 				startIndex += 2;
 			}
 
@@ -282,9 +280,9 @@ var	util = require('util'),
 			if (options.expandVars) {
 				// parse simple @variables blocks and remove them
 				pattern = /@variables\s*\{\s*([^\}]+)\s*\}/g;
-				content = content.replace(pattern, function (token, f1) {
+				content = content.replace(pattern, function (ignore, f1) {
 					pattern = /\s*([a-z0-9\-]+)\s*:\s*([^;\}]+)\s*/gi;
-					f1.replace(pattern, function (token, f1, f2) {
+					f1.replace(pattern, function (ignore, f1, f2) {
 						if (f1 && f2) {
 						vars[f1] = f2;
 						}
@@ -295,7 +293,7 @@ var	util = require('util'),
 
 				// replace var(x) with the value of x
 				pattern = /var\s*\(\s*([^\)]+)\s*\)/g;
-				content = content.replace(pattern, function (token, f1) {
+				content = content.replace(pattern, function (ignore, f1) {
 					return vars[f1] || 'none';
 				});
 			}
@@ -304,14 +302,14 @@ var	util = require('util'),
 			content = content.replace(/\s+/g, " ");
 
 			// preserve formulas in calc() before removing spaces
-			var index, l, chr, unbalanced, calc;
 			pattern = /calc\(([^\)\()]*)\)/;
+			var preserveCalc = function (ignore, f1) {
+				preservedTokens.push('calc(' + f1.replace(/(^\s*|\s*$)/g, "") + ')');
+				return "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___";
+			};
 			while (true) {
 				if (pattern.test(content)) {
-					content = content.replace(pattern, function (token, f1) {
-						preservedTokens.push('calc(' + f1.replace(/(^\s*|\s*$)/g, "") + ')');
-						return "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___";
-					});
+					content = content.replace(pattern, preserveCalc);
 				} else {
 					break;
 				}
@@ -319,7 +317,7 @@ var	util = require('util'),
 
 			// preserve matrix
 			pattern = /\s*filter:\s*progid:DXImageTransform.Microsoft.Matrix\(([^\)]+)\);/g;
-			content = content.replace(pattern, function (token, f1) {
+			content = content.replace(pattern, function (ignore, f1) {
 				preservedTokens.push(f1);
 				return "filter:progid:DXImageTransform.Microsoft.Matrix(___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___);";
 			});
@@ -342,7 +340,7 @@ var	util = require('util'),
 			content = content.replace(/___PSEUDOCLASSCOLON___/g, ":");
 
 			// retain space for special IE6 cases
-			content = content.replace(/:first-(line|letter)(\{|,)/gi, function (token, f1, f2) {
+			content = content.replace(/:first-(line|letter)(\{|,)/gi, function (ignore, f1, f2) {
 				return ":first-" + f1.toLowerCase() + " " + f2;
 			});
 
@@ -357,25 +355,25 @@ var	util = require('util'),
 
 			// If there are multiple @charset directives, push them to the top of the file.
 			pattern = /^(.*)(@charset)( "[^"]*";)/gi;
-			content = content.replace(pattern, function (token, f1, f2, f3) {
+			content = content.replace(pattern, function (ignore, f1, f2, f3) {
 				return f2.toLowerCase() + f3 + f1;
 			});
 
 			// When all @charset are at the top, remove the second and after (as they are completely ignored).
 			pattern = /^((\s*)(@charset)( [^;]+;\s*))+/gi;
-			content = content.replace(pattern, function (token, f1, f2, f3, f4) {
+			content = content.replace(pattern, function (ignore, ignore2, f2, f3, f4) {
 				return f2 + f3.toLowerCase() + f4;
 			});
 
 			// lowercase some popular @directives (@charset is done right above)
 			pattern = /@(font-face|import|(?:-(?:atsc|khtml|moz|ms|o|wap|webkit)-)?keyframe|media|page|namespace)/gi;
-			content = content.replace(pattern, function (token, f1) {
+			content = content.replace(pattern, function (ignore, f1) {
 				return '@' + f1.toLowerCase();
 			});
 
 			// lowercase some more common pseudo-elements
 			pattern = /:(active|after|before|checked|disabled|empty|enabled|first-(?:child|of-type)|focus|hover|last-(?:child|of-type)|link|only-(?:child|of-type)|root|:selection|target|visited)/gi;
-			content = content.replace(pattern, function (token, f1) {
+			content = content.replace(pattern, function (ignore, f1) {
 				return ':' + f1.toLowerCase();
 			});
 
@@ -385,14 +383,14 @@ var	util = require('util'),
 
 			// lowercase some more common functions
 			pattern = /:(lang|not|nth-child|nth-last-child|nth-last-of-type|nth-of-type|(?:-(?:atsc|khtml|moz|ms|o|wap|webkit)-)?any)\(/gi;
-			content = content.replace(pattern, function (token, f1) {
+			content = content.replace(pattern, function (ignore, f1) {
 				return ':' + f1.toLowerCase() + '(';
 			});
 
 			// lower case some common function that can be values
 			// NOTE: rgb() isn't useful as we replace with #hex later, as well as and() is already done for us right after this
 			pattern = /([:,\( ]\s*)(attr|color-stop|from|rgba|to|url|(?:-(?:atsc|khtml|moz|ms|o|wap|webkit)-)?(?:calc|max|min|(?:repeating-)?(?:linear|radial)-gradient)|-webkit-gradient)/gi;
-			content = content.replace(pattern, function (token, f1, f2) {
+			content = content.replace(pattern, function (ignore, f1, f2) {
 				return f1 + f2.toLowerCase();
 			});
 
@@ -420,7 +418,7 @@ var	util = require('util'),
 			// replace background-position:0; with background-position:0 0;
 			// same for transform-origin
 			pattern = /(background-position|transform-origin|webkit-transform-origin|moz-transform-origin|o-transform-origin|ms-transform-origin):0(;|\})/gi;
-			content = content.replace(pattern, function (token, f1, f2) {
+			content = content.replace(pattern, function (ignore, f1, f2) {
 				return f1.toLowerCase() + ":0 0" + f2;
 			});
 
@@ -430,7 +428,7 @@ var	util = require('util'),
 			// shorten colors from rgb(51,102,153) to #336699
 			// this makes it more likely that it'll get further compressed in the next step.
 			pattern = /rgb\s*\(\s*([0-9,\s]+)\s*\)/gi;
-			content = content.replace(pattern, function (token, f1) {
+			content = content.replace(pattern, function (ignore, f1) {
 				rgbcolors = f1.split(",");
 				hexcolor = "#";
 				for (i = 0; i < rgbcolors.length; i += 1) {
@@ -464,7 +462,7 @@ var	util = require('util'),
 
 			// border: none -> border:0
 			pattern = /(border|border-top|border-right|border-bottom|border-left|outline|background):none(;|\})/gi;
-			content = content.replace(pattern, function (token, f1, f2) {
+			content = content.replace(pattern, function (ignore, f1, f2) {
 				return f1.toLowerCase() + ":0" + f2;
 			});
 
