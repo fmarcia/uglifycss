@@ -321,6 +321,9 @@ var	util = require('util'),
 			// remove spaces before the things that should not have spaces before them.
 			content = content.replace(/\s+([!{};:>+\(\)\],])/g, "$1");
 
+			// restore spaces for !important
+			content = content.replace(/!important/g, " !important");
+
 			// bring back the colon
 			content = content.replace(/___PSEUDOCLASSCOLON___/g, ":");
 
