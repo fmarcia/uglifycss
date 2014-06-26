@@ -318,7 +318,9 @@ var	util = require('util'),
 			content = content.replace(/___PSEUDOCLASSCOLON___/g, ":");
 
 			// retain space for special IE6 cases
-			content = content.replace(/:first-(line|letter)(\{|,)/g, ":first-$1 $2");
+			content = content.replace(/:first-(line|letter)(\{|,)/gi, function(token, f1, f2) {
+				return ":first-" + f1.toLowerCase() + " " + f2;
+			});
 
 			// newlines before and after the end of a preserved comment
 			if (options.cuteComments) {
