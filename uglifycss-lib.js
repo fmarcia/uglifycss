@@ -473,10 +473,10 @@ var	util = require('util'),
 			// trim the final string (for any leading or trailing white spaces)
 			content = content.replace(/(^\s*|\s*$)/g, "");
 
-			// restore preserved comments and strings
-			content = content.replace(/___PRESERVED_TOKEN_(\d+)___/g, function (token, f1) {
-				return preservedTokens[parseInt(f1, 10)];
-			});
+			// restore preserved tokens
+	        for (i = preservedTokens.length - 1; i >= 0 ; i--) {
+				content = content.replace("___PRESERVED_TOKEN_" + i + "___", preservedTokens[i], "g");
+			}
 
 			// restore preserved newlines
 			content = content.replace(/___PRESERVED_NEWLINE___/g, '\n');
