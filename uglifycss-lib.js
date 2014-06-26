@@ -133,7 +133,7 @@ var	util = require('util'),
 		 * @param {String} css The input css
 		 * @returns String The processed css
 		 */
-		compressHexColors: function(css) {
+		compressHexColors: function (css) {
 
 			// Look for hex colors inside { ... } (to avoid IDs) and which don't have a =, or a " in front of them (to avoid filters)
 			var pattern = /(\=\s*?["']?)?#([0-9a-f])([0-9a-f])([0-9a-f])([0-9a-f])([0-9a-f])([0-9a-f])(\}|[^0-9a-f{][^{]*?\})/gi,
@@ -174,7 +174,7 @@ var	util = require('util'),
 
 		// Uglify a CSS string
 
-		processString: function(content, options) {
+		processString: function (content, options) {
 
 			var startIndex,
 				endIndex,
@@ -284,7 +284,7 @@ var	util = require('util'),
 				pattern = /@variables\s*\{\s*([^\}]+)\s*\}/g;
 				content = content.replace(pattern, function (token, f1) {
 					pattern = /\s*([a-z0-9\-]+)\s*:\s*([^;\}]+)\s*/gi;
-					f1.replace(pattern, function(token, f1, f2) {
+					f1.replace(pattern, function (token, f1, f2) {
 						if (f1 && f2) {
 						vars[f1] = f2;
 						}
@@ -342,7 +342,7 @@ var	util = require('util'),
 			content = content.replace(/___PSEUDOCLASSCOLON___/g, ":");
 
 			// retain space for special IE6 cases
-			content = content.replace(/:first-(line|letter)(\{|,)/gi, function(token, f1, f2) {
+			content = content.replace(/:first-(line|letter)(\{|,)/gi, function (token, f1, f2) {
 				return ":first-" + f1.toLowerCase() + " " + f2;
 			});
 
@@ -522,7 +522,7 @@ var	util = require('util'),
 
 		// Uglify CSS files
 
-		processFiles: function(filenames, options) {
+		processFiles: function (filenames, options) {
 
 			var	nFiles = filenames.length,
 				uglies = [],
