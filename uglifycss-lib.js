@@ -303,6 +303,20 @@ var	util = require('util'),
 			// normalize all whitespace strings to single spaces. Easier to work with that way.
 			content = content.replace(/\s+/g, " ");
 
+			// preserve formulas in calc() before removing spaces
+			var index, l, chr, unbalanced, calc;
+			pattern = /calc\(([^\)\()]*)\)/;
+			while (true) {
+				if (pattern.test(content)) {
+					content = content.replace(pattern, function (token, f1) {
+						preservedTokens.push('calc(' + f1.replace(/(^\s*|\s*$)/g, "") + ')');
+						return "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___";
+					});
+				} else {
+					break;
+				}
+			}
+
 			// preserve matrix
 			pattern = /\s*filter:\s*progid:DXImageTransform.Microsoft.Matrix\(([^\)]+)\);/g;
 			content = content.replace(pattern, function (token, f1) {
