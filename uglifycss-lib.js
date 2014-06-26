@@ -97,7 +97,7 @@ var	util = require('util'),
 
 				if (foundTerminator) {
 					token = css.substring(startIndex, endIndex);
-					token = token.replace(/(^\s*|\s*$)/g, "");
+					token = token.replace(/\s+/g, "");
 					preservedTokens.push(token);
 
 					preserver = "url(___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___)";
