@@ -381,7 +381,7 @@ var	util = require('util'),
 			content = uglifycss.compressHexColors(content);
 
 			// border: none -> border:0
-			pattern = /(border|border-top|border-right|border-bottom|border-right|outline|background):none(;|\})/gi;
+			pattern = /(border|border-top|border-right|border-bottom|border-left|outline|background):none(;|\})/gi;
 			content = content.replace(pattern, function (token, f1, f2) {
 				return f1.toLowerCase() + ":0" + f2;
 			});
