@@ -303,6 +303,13 @@ var	util = require('util'),
 			// normalize all whitespace strings to single spaces. Easier to work with that way.
 			content = content.replace(/\s+/g, " ");
 
+			// preserve matrix
+			pattern = /\s*filter:\s*progid:DXImageTransform.Microsoft.Matrix\(([^\)]+)\);/g;
+			content = content.replace(pattern, function (token, f1) {
+				preservedTokens.push(f1);
+				return "filter:progid:DXImageTransform.Microsoft.Matrix(___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___);";
+			});
+
 			// remove the spaces before the things that should not have spaces before them.
 			// but, be careful not to turn "p :link {...}" into "p:link{...}"
 			// swap out any pseudo-class colons with the token, and then swap back.
