@@ -170,6 +170,91 @@ function compressHexColors(css) {
     return sb.join("");
 }
 
+// Preserve 0 followed by unit in keyframes steps
+
+function keyframes(content, preservedTokens) {
+
+    var level,
+        buffer,
+        buffers,
+        keyframes = [],
+        pattern = /@[a-z0-9-_]*keyframes\s+[a-z0-9-_]+\s*{/gi,
+        index = 0,
+        startIndex;
+
+    while (true) {
+
+        level = 0;
+        buffer = '';
+
+        startIndex = content.slice(index).search(pattern);
+        if (startIndex < 0) {
+            break;
+        }
+
+        index += startIndex;
+        startIndex = index;
+        len = content.length;
+        buffers = [];
+
+        for (; index < len; ++index) {
+
+            c = content.charAt(index);
+
+            if (c === '{') {
+
+                if (level === 0) {
+                    buffers.push(buffer.replace(/(^\s|\s$)/g, ''));
+
+                } else if (level === 1) {
+
+                    buffer = buffer.split(',');
+
+                    buffer.forEach(function (part, index) {
+
+                        part = part.replace(/(^\s|\s$)/g, '');
+
+                        if (part.charAt(0) === '0') {
+                            preservedTokens.push(part);
+                            buffer[index] = "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___";
+                        }
+                    });
+
+                    buffers.push(buffer.join(',').replace(/(^\s|\s$)/g, ''));
+                }
+
+                buffer = '';
+                level += 1;
+
+            } else if (c === '}') {
+
+                if (level === 2) {
+                    buffers.push('{' + buffer.replace(/(^\s|\s$)/g, '') + '}');
+                    buffer = '';
+
+                } else if (level === 1) {
+                    content = content.slice(0, startIndex) +
+                        buffers.shift() + '{' +
+                        buffers.join('') +
+                        content.slice(index);
+                    break;
+                }
+
+                level -= 1;
+            }
+
+            if (level < 0) {
+                break;
+
+            } else if (c !== '{' && c !== '}') {
+                buffer += c;
+            }
+        }
+    }
+
+    return content;
+}
+
 // Uglify a CSS string
 
 function processString(content, options) {
@@ -348,6 +433,9 @@ function processString(content, options) {
 
         return f1 + ":" + f2;
     });
+
+    // preserve 0 followed by unit in keyframes steps (WIP)
+    content = keyframes(content, preservedTokens);
 
     // retain space for special IE6 cases
     content = content.replace(/:first-(line|letter)(\{|,)/gi, function (ignore, f1, f2) {
