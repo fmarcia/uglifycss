@@ -339,6 +339,18 @@ var	util = require('util'),
 			// bring back the colon
 			content = content.replace(/___PSEUDOCLASSCOLON___/g, ":");
 
+			// preserve 0 followed by unit for animation and animation-duration
+			pattern = /\s*(animation|animation-duration):\s*([^;}]+)/gi;
+			content = content.replace(pattern, function (ignore, f1, f2) {
+
+				f2 = f2.replace(/(\s*)0(px|em|%|in|cm|mm|pc|pt|ex|deg|g?rad|m?s|k?hz)\s*/gi, function (ignore, g1, g2) {
+					preservedTokens.push('0' + g2);
+					return g1 + "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___"
+				});
+
+				return f1 + ":" + f2;
+			});
+
 			// retain space for special IE6 cases
 			content = content.replace(/:first-(line|letter)(\{|,)/gi, function (ignore, f1, f2) {
 				return ":first-" + f1.toLowerCase() + " " + f2;
