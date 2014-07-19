@@ -24,6 +24,8 @@
  * by Yahoo! Inc. under the BSD (revised) open source license.
  */
 
+'use strict';
+
 var util = require('util');
 var fs = require('fs');
 
@@ -177,10 +179,19 @@ function keyframes(content, preservedTokens) {
     var level,
         buffer,
         buffers,
-        keyframes = [],
         pattern = /@[a-z0-9-_]*keyframes\s+[a-z0-9-_]+\s*{/gi,
         index = 0,
+        len,
+        c,
         startIndex;
+
+    var preserve = function (part, index) {
+        part = part.replace(/(^\s|\s$)/g, '');
+        if (part.charAt(0) === '0') {
+            preservedTokens.push(part);
+            buffer[index] = "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___";
+        }
+    };
 
     while (true) {
 
@@ -210,15 +221,7 @@ function keyframes(content, preservedTokens) {
 
                     buffer = buffer.split(',');
 
-                    buffer.forEach(function (part, index) {
-
-                        part = part.replace(/(^\s|\s$)/g, '');
-
-                        if (part.charAt(0) === '0') {
-                            preservedTokens.push(part);
-                            buffer[index] = "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___";
-                        }
-                    });
+                    buffer.forEach(preserve);
 
                     buffers.push(buffer.join(',').replace(/(^\s|\s$)/g, ''));
                 }
@@ -428,7 +431,7 @@ function processString(content, options) {
 
         f2 = f2.replace(/(\s*)0(m?s)\s*/gi, function (ignore, g1, g2) {
             preservedTokens.push('0' + g2);
-            return g1 + "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___"
+            return g1 + "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___";
         });
 
         return f1 + ":" + f2;
