@@ -426,7 +426,7 @@ function processString(content, options) {
     pattern = /\s*(animation|animation-duration):\s*([^;}]+)/gi;
     content = content.replace(pattern, function (ignore, f1, f2) {
 
-        f2 = f2.replace(/(\s*)0(px|em|%|in|cm|mm|pc|pt|ex|deg|g?rad|m?s|k?hz)\s*/gi, function (ignore, g1, g2) {
+        f2 = f2.replace(/(\s*)0(m?s)\s*/gi, function (ignore, g1, g2) {
             preservedTokens.push('0' + g2);
             return g1 + "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___"
         });
@@ -503,10 +503,10 @@ function processString(content, options) {
     content = content.replace(/;+\}/g, "}");
 
     // replace 0(px,em,%) with 0.
-    content = content.replace(/(^|[^.0-9])(?:0?\.)?0(?:px|em|%|in|cm|mm|pc|pt|ex|deg|g?rad|m?s|k?hz)/gi, "$10");
+    content = content.replace(/(^|[^.0-9])(?:0?\.)?0(?:ex|ch|r?em|vw|vh|vmin|vmax|cm|mm|in|pt|pc|px|deg|g?rad|turn|m?s|k?Hz|dpi|dpcm|dppx|%)/gi, "$10");
 
     // Replace x.0(px,em,%) with x(px,em,%).
-    content = content.replace(/([0-9])\.0(px|em|%|in|cm|mm|pc|pt|ex|deg|g?rad|m?s|k?hz| |;)/gi, "$1$2");
+    content = content.replace(/([0-9])\.0(ex|ch|r?em|vw|vh|vmin|vmax|cm|mm|in|pt|pc|px|deg|g?rad|turn|m?s|k?Hz|dpi|dpcm|dppx|%| |;)/gi, "$1$2");
 
     // replace 0 0 0 0; with 0.
     content = content.replace(/:0 0 0 0(;|\})/g, ":0$1");
