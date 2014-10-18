@@ -36,7 +36,7 @@ for ( i in files ) {
 
 // report total
 if ( failed ) {
-	util.puts( total + ' tests, ' + failed + ' failed' );
+	console.log( total + ' tests, ' + failed + ' failed' );
 } else {
-	util.puts( total + ' tests, no failure!' );
+	console.log( total + ' tests, no failure!' );
 }
