@@ -647,6 +647,7 @@ function processFiles(filenames, options) {
 }
 
 module.exports = {
+    defaultOptions: defaultOptions,
     processString: processString,
     processFiles: processFiles
 };
