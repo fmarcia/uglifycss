@@ -425,12 +425,12 @@ function processString(content, options) {
     // bring back the colon
     content = content.replace(/___PSEUDOCLASSCOLON___/g, ":");
 
-    // preserve 0 followed by unit for animation and animation-duration
-    pattern = /\s*(animation|animation-duration):\s*([^;}]+)/gi;
+    // preserve 0 followed by a time unit for properties using time units
+    pattern = /\s*(animation|animation-delay|animation-duration|transition|transition-delay|transition-duration):\s*([^;}]+)/gi;
     content = content.replace(pattern, function (ignore, f1, f2) {
 
-        f2 = f2.replace(/(\s*)0(m?s)\s*/gi, function (ignore, g1, g2) {
-            preservedTokens.push('0' + g2);
+        f2 = f2.replace(/(\s*)0?.?0(m?s)\s*/gi, function (ignore, g1, g2) {
+            preservedTokens.push('0s');
             return g1 + "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___";
         });
 
