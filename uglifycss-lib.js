@@ -285,16 +285,15 @@ function processString(content, options) {
     content = extractDataUrls(content, preservedTokens);
 
     // collect all comment blocks...
-    while ((startIndex = content.indexOf("/*", startIndex)) >= 0) {
-        endIndex = content.indexOf("*/", startIndex + 2);
-        if (endIndex < 0) {
-            endIndex = len;
+    content = content.split("/*");
+    for (i = 0, c = content.length; i < c; ++i) {
+        endIndex = content[i].indexOf("*/");
+        if (endIndex > -1) {
+            comments.push(content[i].slice(0, endIndex));
+            content[i] = "/*___PRESERVE_CANDIDATE_COMMENT_" + (comments.length - 1) + "___" + content[i].slice(endIndex);
         }
-        token = content.slice(startIndex + 2, endIndex);
-        comments.push(token);
-        content = content.slice(0, startIndex + 2) + "___PRESERVE_CANDIDATE_COMMENT_" + (comments.length - 1) + "___" + content.slice(endIndex);
-        startIndex += 2;
     }
+    content = content.join("");
 
     // preserve strings so their content doesn't get accidentally minified
     pattern = /("([^\\"]|\\.|\\)*")|('([^\\']|\\.|\\)*')/g;
