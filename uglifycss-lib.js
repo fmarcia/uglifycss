@@ -436,6 +436,21 @@ function processString(content, options) {
         return f1 + ":" + f2;
     });
 
+    // preserve 0% in hsl and hsla color definitions
+    content = content.replace(/(hsla?)\(([^)]+)\)/g, function (ignore, f1, f2) {
+        var f0 = [];
+        f2.split(',').forEach(function (part) {
+            part = part.replace(/(^\s+|\s+$)/g, "");
+            if (part === '0%') {
+                preservedTokens.push('0%');
+                f0.push("___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___");
+            } else {
+                f0.push(part);
+            }
+        });
+        return f1 + '(' + f0.join(',') + ')';
+    });
+
     // preserve 0 followed by unit in keyframes steps (WIP)
     content = keyframes(content, preservedTokens);
 
