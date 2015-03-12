@@ -26,65 +26,53 @@
  * by Yahoo! Inc. under the BSD (revised) open source license.
  */
 
-var util = require('util'),
-    uglifycss = require('./'),
-    uglies = [],
-    stdin = process.stdin,
-    filename,
-    content,
-    params,
-    nFiles,
-    result;
+var util = require("util");
+var uglifycss = require("./");
 
 // Print usage
-
 function usage() {
     util.error(
-        'Usage: uglifycss [options] file1.css [file2.css [...]] > output\n' +
-        'options:\n' +
-        '--max-line-len x  add a newline every x characters; 0 means no newline; default: 5000\n' +
-        '--expand-vars     expand variables\n' +
-        '--ugly-comments   remove newlines within preserved comments\n' +
-        '--cute-comments   preserve newlines within and around preserved comments'
+        "Usage: uglifycss [options] file1.css [file2.css [...]] > output\n" +
+        "options:\n" +
+        "--max-line-len x  add a newline every x characters; 0 means no newline; default: 5000\n" +
+        "--expand-vars     expand variables\n" +
+        "--ugly-comments   remove newlines within preserved comments\n" +
+        "--cute-comments   preserve newlines within and around preserved comments"
     );
 }
 
 // Transform strings like "the-parameter" to "theParameter"
-
 function par2var(param) {
-    return param.replace(/-(.)/g, function (unused, character) {
-        return character === '-' ? '' : character.toUpperCase();
+    return param.replace(/-(.)/g, function (ignore, character) {
+        return character === "-" ? "" : character.toUpperCase();
     });
 }
 
-
 // Parse parameters from command line
-
 function parseArguments(argv) {
 
-    var index,
-        len = argv.length,
-        param,
-        params = {
-            options: uglifycss.defaultOptions,
-            files: []
-        };
+    var params = {
+        options: uglifycss.defaultOptions,
+        files: []
+    };
+    var len = argv.length;
 
-    for (index = 2; index < len; index += 1) {
+    for (var index = 2; index < len; index += 1) {
 
         // last argument is always a file
         if (index === len - 1) {
             params.files.push(argv[index]);
 
         } else {
-            varia = par2var(argv[index]);
+
+            var varia = par2var(argv[index]);
 
             // boolean parameters
-            if (typeof params.options[varia] === 'boolean') {
+            if (typeof params.options[varia] === "boolean") {
                 params.options[varia] = true;
 
             // integer parameter
-            } else if (typeof params.options[varia] !== 'undefined') {
+            } else if (typeof params.options[varia] !== "undefined") {
                 params.options[varia] = parseInt(argv[index + 1], 10);
                 index += 1;
 
@@ -98,30 +86,32 @@ function parseArguments(argv) {
     return params;
 }
 
+// Entry
+(function main() {
 
-// Uglify CSS
+    var params = parseArguments(process.argv);
+    var nFiles = params.files.length;
+    var stdin = process.stdin;
+    var content = "";
 
-params = parseArguments(process.argv);
-nFiles = params.files.length;
+    // . files
+    if (nFiles) {
+        util.print(uglifycss.processFiles(params.files, params.options));
 
-// . files
-if (nFiles) {
-    util.print(uglifycss.processFiles(params.files, params.options));
+    // . usage
+    } else if (stdin.isTTY) {
+        usage();
 
-// . usage
-} else if (stdin.isTTY) {
-    usage();
+    // . stdin
+    } else {
 
-// . stdin
-} else {
+        stdin.on("data", function (part) {
+            content += part;
+        });
 
-    content = '';
+        stdin.on("end", function () {
+            util.print(uglifycss.processString(content, params.options));
+        });
+    }
 
-    stdin.on('data', function (part) {
-        content += part;
-    });
-
-    stdin.on('end', function () {
-        util.print(uglifycss.processString(content, params.options));
-    });
-}
+}());
