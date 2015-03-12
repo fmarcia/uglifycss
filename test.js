@@ -17,28 +17,29 @@
  */
 
 
-var util = require('util'),
-    uglifycss = require('./uglifycss-lib'),
-    options = {
-        maxLineLen: 0,
-        expandVars: false,
-        cuteComments: true
-    },
-    content =
-        '/*!\n' +
-        ' * UglifyCSS test\n' +
-        ' */\n' +
-        '.class {\n' +
-        '   font-family : Helvetica Neue, Arial, Helvetica, \'Liberation Sans\', FreeSans, sans-serif;\n' +
-        '   border: 1px solid #000000;\n' +
-        '   margin: 0 0 0 0;\n' +
-        '   font-size : 12px;\n' +
-        '   font-weight :bold;\n' +
-        '   padding : 5px;\n' +
-        '   position : absolute;\n' +
-        '   z-index : 100000;\n' +
-        '}\n';
+var util = require("util");
+var uglifycss = require("./uglifycss-lib");
 
+var options = {
+    maxLineLen: 0,
+    expandVars: false,
+    cuteComments: true
+};
 
-util.print(uglifycss.processString(content, options) + '\n');
-//uglifycss.processFiles(filenames, options) + '\n');
+var content =
+    "/*!\n" +
+    " * UglifyCSS test\n" +
+    " */\n" +
+    ".class {\n" +
+    "   font-family : Helvetica Neue, Arial, Helvetica, \"Liberation Sans\", FreeSans, sans-serif;\n" +
+    "   border: 1px solid #000000;\n" +
+    "   margin: 0 0 0 0;\n" +
+    "   font-size : 12px;\n" +
+    "   font-weight :bold;\n" +
+    "   padding : 5px;\n" +
+    "   position : absolute;\n" +
+    "   z-index : 100000;\n" +
+    "}\n";
+
+util.print(uglifycss.processString(content, options) + "\n");
+//uglifycss.processFiles(filenames, options) + "\n");
