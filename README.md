@@ -67,3 +67,4 @@ See also [test.js](https://github.com/fmarcia/UglifyCSS/blob/master/test.js).
 ### License
 
 UglifyCSS is MIT licensed.
+
