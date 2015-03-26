@@ -427,8 +427,8 @@ function processString(content, options) {
     pattern = /\s*(animation|animation-delay|animation-duration|transition|transition-delay|transition-duration):\s*([^;}]+)/gi;
     content = content.replace(pattern, function (ignore, f1, f2) {
 
-        f2 = f2.replace(/(^|\D)0?.?0(m?s)/gi, function (ignore, g1) {
-            preservedTokens.push('0s');
+        f2 = f2.replace(/(^|\D)0?.?0(m?s)/gi, function (ignore, g1, g2) {
+            preservedTokens.push('0' + g2);
             return g1 + "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___";
         });
 
