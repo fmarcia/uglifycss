@@ -8,7 +8,6 @@
     var PATH = "../yuicompressor/tests";
 
     // dependancies
-    var util = require("util");
     var fs = require("fs");
     var uglifycss = require("./uglifycss-lib");
 
@@ -35,7 +34,7 @@
         if (/\.css$/.test(file)) {
             var ugly = uglifycss.processFiles([ file ]);
             if (trim(ugly) !== trim(fs.readFileSync(file + ".min"))) {
-                util.puts(file + ": FAILED");
+                console.log(file + ": FAILED");
                 fs.writeFile(file + ".FAILED", ugly);
                 failed += 1;
             }

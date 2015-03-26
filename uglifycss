@@ -26,12 +26,11 @@
  * by Yahoo! Inc. under the BSD (revised) open source license.
  */
 
-var util = require("util");
 var uglifycss = require("./");
 
 // Print usage
 function usage() {
-    util.error(
+    console.log(
         "Usage: uglifycss [options] file1.css [file2.css [...]] > output\n" +
         "options:\n" +
         "--max-line-len x  add a newline every x characters; 0 means no newline; default: 5000\n" +

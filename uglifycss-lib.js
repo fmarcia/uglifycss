@@ -26,7 +26,6 @@
 
 'use strict';
 
-var util = require('util');
 var fs = require('fs');
 
 var defaultOptions = {
@@ -651,7 +650,7 @@ function processFiles(filenames, options) {
                 uglies.push(processString(content, options));
             }
         } catch (e) {
-            util.error('unable to process "' + filename + '" with ' + e);
+            console.error('unable to process "' + filename + '" with ' + e);
             process.exit(1);
         }
     }

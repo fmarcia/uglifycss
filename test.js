@@ -17,7 +17,6 @@
  */
 
 
-var util = require("util");
 var uglifycss = require("./uglifycss-lib");
 
 var options = {
