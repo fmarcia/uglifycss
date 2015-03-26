@@ -41,5 +41,5 @@ var content =
     "   z-index : 100000;\n" +
     "}\n";
 
-util.print(uglifycss.processString(content, options) + "\n");
+console.log(uglifycss.processString(content, options) + "\n");
 //uglifycss.processFiles(filenames, options) + "\n");

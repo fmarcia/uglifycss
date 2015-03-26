@@ -96,7 +96,7 @@ function parseArguments(argv) {
 
     // . files
     if (nFiles) {
-        util.print(uglifycss.processFiles(params.files, params.options));
+        console.log(uglifycss.processFiles(params.files, params.options));
 
     // . usage
     } else if (stdin.isTTY) {
@@ -110,7 +110,7 @@ function parseArguments(argv) {
         });
 
         stdin.on("end", function () {
-            util.print(uglifycss.processString(content, params.options));
+            console.log(uglifycss.processString(content, params.options));
         });
     }
 
