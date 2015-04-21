@@ -277,7 +277,8 @@ function processString(content, options) {
         c,
         line = [],
         lines = [],
-        vars = {};
+        vars = {},
+        partial;
 
     options = options || defaultOptions;
 
@@ -285,14 +286,19 @@ function processString(content, options) {
 
     // collect all comment blocks...
     content = content.split("/*");
+    partial = "";
     for (i = 0, c = content.length; i < c; ++i) {
         endIndex = content[i].indexOf("*/");
         if (endIndex > -1) {
-            comments.push(content[i].slice(0, endIndex));
+            comments.push(partial + content[i].slice(0, endIndex));
+            partial = "";
             content[i] = "/*___PRESERVE_CANDIDATE_COMMENT_" + (comments.length - 1) + "___" + content[i].slice(endIndex);
+        } else if (i > 0) {
+            partial += content[i];
+            content[i] = "";
         }
     }
-    content = content.join("");
+    content = content.join("") + partial;
 
     // preserve strings so their content doesn't get accidentally minified
     pattern = /("([^\\"]|\\.|\\)*")|('([^\\']|\\.|\\)*')/g;
