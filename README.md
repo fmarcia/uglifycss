@@ -2,6 +2,8 @@ UglifyCSS is a port of [YUI Compressor](https://github.com/yui/yuicompressor) to
 
 UglifyCSS passes successfully the test suite of YUI compressor CSS.
 
+Be sure to submit valid CSS to UglifyCSS or you could get weird results.
+
 ### Installation
 
 For a command line usage:
