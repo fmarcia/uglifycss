@@ -257,12 +257,40 @@ function keyframes(content, preservedTokens) {
     return content;
 }
 
+// Collect all comment blocks and return new content with comment placeholders
+// (comments is an array thus passed by reference)
+
+function collectComments(content, comments) {
+    var table = [];
+    var from = 0;
+    var start, end;
+    while (true) {
+        start = content.indexOf("/*", from);
+        if (start > -1) {
+            end = content.indexOf("*/", start + 2);
+            if (end > -1) {
+                comments.push(content.slice(start + 2, end));
+                table.push(content.slice(from, start));
+                table.push("/*___PRESERVE_CANDIDATE_COMMENT_" + (comments.length - 1) + "___*/");
+                from = end + 2;
+            } else {
+                // unterminated comment
+                end = -2;
+                break;
+            }
+        } else {
+            break;
+        }
+    }
+    table.push(content.slice(end + 2));
+    return table.join("");
+}
+
 // Uglify a CSS string
 
 function processString(content, options) {
 
     var startIndex,
-        endIndex,
         comments = [],
         preservedTokens = [],
         token,
@@ -277,28 +305,11 @@ function processString(content, options) {
         c,
         line = [],
         lines = [],
-        vars = {},
-        partial;
+        vars = {};
 
     options = options || defaultOptions;
-
     content = extractDataUrls(content, preservedTokens);
-
-    // collect all comment blocks...
-    content = content.split("/*");
-    partial = "";
-    for (i = 0, c = content.length; i < c; ++i) {
-        endIndex = content[i].indexOf("*/");
-        if (endIndex > -1) {
-            comments.push(partial + content[i].slice(0, endIndex));
-            partial = "";
-            content[i] = "/*___PRESERVE_CANDIDATE_COMMENT_" + (comments.length - 1) + "___" + content[i].slice(endIndex);
-        } else if (i > 0) {
-            partial += content[i];
-            content[i] = "";
-        }
-    }
-    content = content.join("") + partial;
+    content = collectComments(content, comments);
 
     // preserve strings so their content doesn't get accidentally minified
     pattern = /("([^\\"]|\\.|\\)*")|('([^\\']|\\.|\\)*')/g;
