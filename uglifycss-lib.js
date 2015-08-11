@@ -403,18 +403,17 @@ function processString(content, options) {
     content = content.replace(/\s+/g, " ");
 
     // preserve formulas in calc() before removing spaces
-    pattern = /calc\(([^\)\()]*)\)/;
-    var preserveCalc = function (ignore, f1) {
-        preservedTokens.push('calc(' + f1.replace(/(^\s*|\s*$)/g, "") + ')');
+    pattern = /calc\(([^;}]*)\)/g;
+    content = content.replace(pattern, function (ignore, f1) {
+        preservedTokens.push(
+            'calc(' +
+                f1.replace(/(^\s*|\s*$)/g, "")
+                  .replace(/\( /g, "(")
+                  .replace(/ \)/g, ")") +
+            ')'
+        );
         return "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___";
-    };
-    while (true) {
-        if (pattern.test(content)) {
-            content = content.replace(pattern, preserveCalc);
-        } else {
-            break;
-        }
-    }
+    });
 
     // preserve matrix
     pattern = /\s*filter:\s*progid:DXImageTransform.Microsoft.Matrix\(([^\)]+)\);/g;
