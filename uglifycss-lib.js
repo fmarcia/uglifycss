@@ -95,8 +95,17 @@ function extractDataUrls(css, preservedTokens) {
         sb.push(css.substring(appendIndex, m.index));
 
         if (foundTerminator) {
+
             token = css.substring(startIndex, endIndex);
-            token = token.replace(/\s+/g, "");
+            var parts = token.split(",");
+            if (parts.length > 1 && parts[0].slice(-7) == ";base64") {
+                token = token.replace(/\s+/g, "");
+            } else {
+                token = token.replace(/\n/g, " ");
+                token = token.replace(/\s+/g, " ");
+                token = token.replace(/(^\s+|\s+$)/g, "");
+            }
+
             preservedTokens.push(token);
 
             preserver = "url(___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___)";
