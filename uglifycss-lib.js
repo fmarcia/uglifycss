@@ -555,8 +555,8 @@ function processString(content, options) {
     content = content.replace(/:0 0(;|\})/g, ":0$1");
 
     // replace background-position:0; with background-position:0 0;
-    // same for transform-origin
-    pattern = /(background-position|transform-origin|webkit-transform-origin|moz-transform-origin|o-transform-origin|ms-transform-origin):0(;|\})/gi;
+    // same for transform-origin and box-shadow
+    pattern = /(background-position|transform-origin|webkit-transform-origin|moz-transform-origin|o-transform-origin|ms-transform-origin|box-shadow):0(;|\})/gi;
     content = content.replace(pattern, function (ignore, f1, f2) {
         return f1.toLowerCase() + ":0 0" + f2;
     });
