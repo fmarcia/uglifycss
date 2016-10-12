@@ -36,7 +36,8 @@ function usage() {
         "--max-line-len x  add a newline every x characters; 0 means no newline; default: 5000\n" +
         "--expand-vars     expand variables\n" +
         "--ugly-comments   remove newlines within preserved comments\n" +
-        "--cute-comments   preserve newlines within and around preserved comments"
+        "--cute-comments   preserve newlines within and around preserved comments\n" +
+        "--convert-urls d  convert relative urls according to the d directory"
     );
 }
 
@@ -69,6 +70,11 @@ function parseArguments(argv) {
             // boolean parameters
             if (typeof params.options[varia] === "boolean") {
                 params.options[varia] = true;
+
+            // string parameter
+            } else if (typeof params.options[varia] === "string") {
+                params.options[varia] = argv[index + 1] || "";
+                index += 1;
 
             // integer parameter
             } else if (typeof params.options[varia] !== "undefined") {

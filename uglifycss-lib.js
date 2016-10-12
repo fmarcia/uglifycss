@@ -27,13 +27,121 @@
 'use strict';
 
 var fs = require('fs');
+var path = require('path');
 
 var defaultOptions = {
     maxLineLen: 0,
     expandVars: false,
     uglyComments: false,
-    cuteComments: false
+    cuteComments: false,
+    convertUrls: ""
 };
+
+/**
+ * Utility method to convert relative urls and replace them with tokens before
+ * we start compressing. It must be called *after* extractDataUrls
+ *
+ * @private
+ * @function convertRelativeUrls
+ * @param {String} css The input css
+ * @param {Object} options Options
+ * @param {Array} The global array of tokens to preserve
+ * @returns String The processed css
+ */
+function convertRelativeUrls(css, options, preservedTokens) {
+
+    var maxIndex = css.length - 1,
+        appendIndex = 0,
+        startIndex,
+        endIndex,
+        terminator,
+        foundTerminator,
+        sb = [],
+        m,
+        preserver,
+        token,
+        url,
+        file,
+        target,
+        pattern = /(url\s*\()\s*(["']?)/g;
+
+    // Since we need to account for non-base64 data urls, we need to handle
+    // ' and ) being part of the data string. Hence switching to indexOf,
+    // to determine whether or not we have matching string terminators and
+    // handling sb appends directly, instead of using matcher.append* methods.
+
+    while ((m = pattern.exec(css)) !== null) {
+
+        startIndex = m.index + m[1].length;  // "url(".length()
+        terminator = m[2];         // ', " or empty (not quoted)
+
+        if (terminator.length === 0) {
+            terminator = ")";
+        }
+
+        foundTerminator = false;
+
+        endIndex = pattern.lastIndex - 1;
+
+        while(foundTerminator === false && endIndex+1 <= maxIndex) {
+            endIndex = css.indexOf(terminator, endIndex + 1);
+
+            // endIndex == 0 doesn't really apply here
+            if ((endIndex > 0) && (css.charAt(endIndex - 1) !== '\\')) {
+                foundTerminator = true;
+                if (")" != terminator) {
+                    endIndex = css.indexOf(")", endIndex);
+                }
+            }
+        }
+
+        // Enough searching, start moving stuff over to the buffer
+        sb.push(css.substring(appendIndex, m.index));
+
+        if (foundTerminator) {
+
+            token = css.substring(startIndex, endIndex).replace(/(^\s*|\s*$)/g, "");
+            if (token.slice(0, 18) === "___PRESERVED_TOKEN_") {
+                continue;
+            }
+            if (terminator === "'" || terminator === '"') {
+                token = token.slice(1, -1);
+            } else if (terminator === ")") {
+                terminator = "";
+            }
+
+            // get path of detected urls:
+            target = options.target.slice();
+            url = path.resolve(options.source.join(path.sep), token).split(path.sep);
+            file = url.pop();
+
+            // remove common part of both paths
+            while (target[0] === url[0]) {
+                target.shift();
+                url.shift();
+            }
+
+            target.fill("..");
+            url = terminator + target.concat(url, file).join(path.sep) + terminator;
+
+            preservedTokens.push(url);
+
+            preserver = "url(___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___)";
+            sb.push(preserver);
+
+            appendIndex = endIndex + 1;
+
+        } else {
+            // No end terminator found, re-add the whole match. Should we throw/warn here?
+            sb.push(css.substring(m.index, pattern.lastIndex));
+            appendIndex = pattern.lastIndex;
+        }
+    }
+
+    sb.push(css.substring(appendIndex));
+
+    return sb.join("");
+}
 
 /**
  * Utility method to replace all data urls with tokens before we start
@@ -318,6 +426,9 @@ function processString(content, options) {
 
     options = options || defaultOptions;
     content = extractDataUrls(content, preservedTokens);
+    if (options.convertUrls) {
+        content = convertRelativeUrls(content, options, preservedTokens);
+    }
     content = collectComments(content, comments);
 
     // preserve strings so their content doesn't get accidentally minified
@@ -666,12 +777,20 @@ function processFiles(filenames, options) {
         filename,
         content;
 
+    if (options.convertUrls) {
+        options.target = path.resolve(process.cwd(), options.convertUrls).split(path.sep);
+    }
+
     // process files
     for (index = 0; index < nFiles; index += 1) {
         filename = filenames[index];
         try {
             content = fs.readFileSync(filename, 'utf8');
             if (content.length) {
+                if (options.convertUrls) {
+                    options.source = path.resolve(process.cwd(), filename).split(path.sep);
+                    options.source.pop();
+                }
                 uglies.push(processString(content, options));
             }
         } catch (e) {

@@ -33,6 +33,7 @@ Options:
 * `--expand-vars` expands variables; by default, `@variables` blocks are preserved and `var(x)`s are not expanded
 * `--ugly-comments` removes newlines within preserved comments; by default, newlines are preserved
 * `--cute-comments` preserves newlines within and around preserved comments
+* `--convert-urls d` convert relative urls according to the `d` directory
 
 If no file name is specified, input is read from stdin.
 
