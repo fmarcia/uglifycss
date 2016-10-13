@@ -29,6 +29,11 @@
 var fs = require('fs');
 var path = require('path');
 
+var SEP = "/";
+var PATH_SEP = path.sep;
+
+var pathResolve = PATH_SEP === "/" ? path.posix.resolve : path.win32.resolve;
+
 var defaultOptions = {
     maxLineLen: 0,
     expandVars: false,
@@ -110,9 +115,11 @@ function convertRelativeUrls(css, options, preservedTokens) {
                 terminator = "";
             }
 
-            // get path of detected urls:
+            // build path of detected urls:
             target = options.target.slice();
-            url = path.resolve(options.source.join(path.sep), token).split(path.sep);
+            token = token.split(SEP).join(PATH_SEP); // assuming urls in css use "/"
+            url = pathResolve(options.source.join(PATH_SEP), token).split(PATH_SEP);
+
             file = url.pop();
 
             // remove common part of both paths
@@ -122,7 +129,7 @@ function convertRelativeUrls(css, options, preservedTokens) {
             }
 
             target.fill("..");
-            url = terminator + target.concat(url, file).join(path.sep) + terminator;
+            url = terminator + target.concat(url, file).join(SEP) + terminator;
 
             preservedTokens.push(url);
 
@@ -778,7 +785,7 @@ function processFiles(filenames, options) {
         content;
 
     if (options.convertUrls) {
-        options.target = path.resolve(process.cwd(), options.convertUrls).split(path.sep);
+        options.target = pathResolve(process.cwd(), options.convertUrls).split(PATH_SEP);
     }
 
     // process files
@@ -788,7 +795,7 @@ function processFiles(filenames, options) {
             content = fs.readFileSync(filename, 'utf8');
             if (content.length) {
                 if (options.convertUrls) {
-                    options.source = path.resolve(process.cwd(), filename).split(path.sep);
+                    options.source = pathResolve(process.cwd(), filename).split(PATH_SEP);
                     options.source.pop();
                 }
                 uglies.push(processString(content, options));
