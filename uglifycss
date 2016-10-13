@@ -57,34 +57,28 @@ function parseArguments(argv) {
     };
     var len = argv.length;
 
-    for (var index = 2; index < len; index += 1) {
+    for (var i = 2; i < len; i += 1) {
 
-        // last argument is always a file
-        if (index === len - 1) {
-            params.files.push(argv[index]);
+        // get "propertyName" from "--argument-name"
+        var v = par2var(argv[i]);
 
+        // boolean parameters
+        if (typeof params.options[v] === "boolean") {
+            params.options[v] = true;
+
+        // string parameter
+        } else if (typeof params.options[v] === "string") {
+            params.options[v] = argv[i + 1] || "";
+            i += 1;
+
+        // integer parameter
+        } else if (typeof params.options[v] !== "undefined") {
+            params.options[v] = parseInt(argv[i + 1], 10);
+            i += 1;
+
+        // file
         } else {
-
-            var varia = par2var(argv[index]);
-
-            // boolean parameters
-            if (typeof params.options[varia] === "boolean") {
-                params.options[varia] = true;
-
-            // string parameter
-            } else if (typeof params.options[varia] === "string") {
-                params.options[varia] = argv[index + 1] || "";
-                index += 1;
-
-            // integer parameter
-            } else if (typeof params.options[varia] !== "undefined") {
-                params.options[varia] = parseInt(argv[index + 1], 10);
-                index += 1;
-
-            // file
-            } else {
-                params.files.push(argv[index]);
-            }
+            params.files.push(argv[i]);
         }
     }
 
