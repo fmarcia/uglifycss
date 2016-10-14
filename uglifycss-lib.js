@@ -782,8 +782,9 @@ function processFiles(filenames, options) {
         uglies = [],
         index,
         filename,
-        content
-        options = options || defaultOptions;
+        content;
+
+    options = options || defaultOptions;
 
     if (options.convertUrls) {
         options.target = pathResolve(process.cwd(), options.convertUrls).split(PATH_SEP);
