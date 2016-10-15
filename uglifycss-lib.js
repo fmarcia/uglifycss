@@ -31,6 +31,7 @@ var path = require('path');
 
 var SEP = "/";
 var PATH_SEP = path.sep;
+var ___PRESERVED_TOKEN_ = "___PRESERVED_TOKEN_";
 
 var pathResolve = PATH_SEP === "/" ? path.posix.resolve : path.win32.resolve;
 
@@ -106,35 +107,44 @@ function convertRelativeUrls(css, options, preservedTokens) {
         if (foundTerminator) {
 
             token = css.substring(startIndex, endIndex).replace(/(^\s*|\s*$)/g, "");
-            if (token.slice(0, 18) === "___PRESERVED_TOKEN_") {
-                continue;
+            if (token.slice(0, 19) !== ___PRESERVED_TOKEN_) {
+
+                if (terminator === "'" || terminator === '"') {
+                    token = token.slice(1, -1);
+                } else if (terminator === ")") {
+                    terminator = "";
+                }
+
+                if (options.convertUrls) {
+
+                    // build path of detected urls:
+                    target = options.target.slice();
+                    token = token.split(SEP).join(PATH_SEP); // assuming urls in css use "/"
+                    url = pathResolve(options.source.join(PATH_SEP), token).split(PATH_SEP);
+
+                    file = url.pop();
+
+                    // remove common part of both paths
+                    while (target[0] === url[0]) {
+                        target.shift();
+                        url.shift();
+                    }
+
+                    target.fill("..");
+                    url = terminator + target.concat(url, file).join(SEP) + terminator;
+
+                } else {
+                    url = terminator + token + terminator;
+                }
+
+                preservedTokens.push(url);
+
+                preserver = "url(" + ___PRESERVED_TOKEN_ + (preservedTokens.length - 1) + "___)";
+                sb.push(preserver);
+
+            } else {
+                sb.push("url(" + token + ")");
             }
-            if (terminator === "'" || terminator === '"') {
-                token = token.slice(1, -1);
-            } else if (terminator === ")") {
-                terminator = "";
-            }
-
-            // build path of detected urls:
-            target = options.target.slice();
-            token = token.split(SEP).join(PATH_SEP); // assuming urls in css use "/"
-            url = pathResolve(options.source.join(PATH_SEP), token).split(PATH_SEP);
-
-            file = url.pop();
-
-            // remove common part of both paths
-            while (target[0] === url[0]) {
-                target.shift();
-                url.shift();
-            }
-
-            target.fill("..");
-            url = terminator + target.concat(url, file).join(SEP) + terminator;
-
-            preservedTokens.push(url);
-
-            preserver = "url(___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___)";
-            sb.push(preserver);
 
             appendIndex = endIndex + 1;
 
@@ -223,7 +233,7 @@ function extractDataUrls(css, preservedTokens) {
 
             preservedTokens.push(token);
 
-            preserver = "url(___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___)";
+            preserver = "url(" + ___PRESERVED_TOKEN_ + (preservedTokens.length - 1) + "___)";
             sb.push(preserver);
 
             appendIndex = endIndex + 1;
@@ -312,7 +322,7 @@ function keyframes(content, preservedTokens) {
         part = part.replace(/(^\s|\s$)/g, '');
         if (part.charAt(0) === '0') {
             preservedTokens.push(part);
-            buffer[index] = "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___";
+            buffer[index] = ___PRESERVED_TOKEN_ + (preservedTokens.length - 1) + "___";
         }
     };
 
@@ -433,9 +443,7 @@ function processString(content, options) {
 
     options = options || defaultOptions;
     content = extractDataUrls(content, preservedTokens);
-    if (options.convertUrls) {
-        content = convertRelativeUrls(content, options, preservedTokens);
-    }
+    content = convertRelativeUrls(content, options, preservedTokens);
     content = collectComments(content, comments);
 
     // preserve strings so their content doesn't get accidentally minified
@@ -452,7 +460,7 @@ function processString(content, options) {
         // minify alpha opacity in filter strings
         token = token.replace(/progid:DXImageTransform.Microsoft.Alpha\(Opacity=/gi, "alpha(opacity=");
         preservedTokens.push(token);
-        return quote + "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___" + quote;
+        return quote + ___PRESERVED_TOKEN_ + (preservedTokens.length - 1) + "___" + quote;
     });
 
     // strings are safe, now wrestle the comments
@@ -471,7 +479,7 @@ function processString(content, options) {
             } else {
                 preservedTokens.push(token);
             }
-            content = content.replace(placeholder,  "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___");
+            content = content.replace(placeholder, ___PRESERVED_TOKEN_ + (preservedTokens.length - 1) + "___");
             continue;
         }
 
@@ -479,12 +487,12 @@ function processString(content, options) {
         // shorten that to /*\*/ and the next one to /**/
         if (token.charAt(token.length - 1) === "\\") {
             preservedTokens.push("\\");
-            content = content.replace(placeholder,  "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___");
+            content = content.replace(placeholder, ___PRESERVED_TOKEN_ + (preservedTokens.length - 1) + "___");
             i = i + 1; // attn: advancing the loop
             preservedTokens.push("");
             content = content.replace(
                 "___PRESERVE_CANDIDATE_COMMENT_" + i + "___",
-                "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___"
+                ___PRESERVED_TOKEN_ + (preservedTokens.length - 1) + "___"
             );
             continue;
         }
@@ -496,7 +504,7 @@ function processString(content, options) {
             if (startIndex > 2) {
                 if (content.charAt(startIndex - 3) === '>') {
                     preservedTokens.push("");
-                    content = content.replace(placeholder,  "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___");
+                    content = content.replace(placeholder, ___PRESERVED_TOKEN_ + (preservedTokens.length - 1) + "___");
                 }
             }
         }
@@ -539,14 +547,14 @@ function processString(content, options) {
                   .replace(/ \)/g, ")") +
             ')'
         );
-        return "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___";
+        return ___PRESERVED_TOKEN_ + (preservedTokens.length - 1) + "___";
     });
 
     // preserve matrix
     pattern = /\s*filter:\s*progid:DXImageTransform.Microsoft.Matrix\(([^\)]+)\);/g;
     content = content.replace(pattern, function (ignore, f1) {
         preservedTokens.push(f1);
-        return "filter:progid:DXImageTransform.Microsoft.Matrix(___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___);";
+        return "filter:progid:DXImageTransform.Microsoft.Matrix(" + ___PRESERVED_TOKEN_ + (preservedTokens.length - 1) + "___);";
     });
 
     // remove the spaces before the things that should not have spaces before them.
@@ -572,7 +580,7 @@ function processString(content, options) {
 
         f2 = f2.replace(/(^|\D)0?\.?0(m?s)/gi, function (ignore, g1, g2) {
             preservedTokens.push('0' + g2);
-            return g1 + "___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___";
+            return g1 + ___PRESERVED_TOKEN_ + (preservedTokens.length - 1) + "___";
         });
 
         return f1 + ":" + f2;
@@ -585,7 +593,7 @@ function processString(content, options) {
             part = part.replace(/(^\s+|\s+$)/g, "");
             if (part === '0%') {
                 preservedTokens.push('0%');
-                f0.push("___PRESERVED_TOKEN_" + (preservedTokens.length - 1) + "___");
+                f0.push(___PRESERVED_TOKEN_ + (preservedTokens.length - 1) + "___");
             } else {
                 f0.push(part);
             }
@@ -764,7 +772,7 @@ function processString(content, options) {
 
     // restore preserved tokens
     for (i = preservedTokens.length - 1; i >= 0 ; i--) {
-        content = content.replace("___PRESERVED_TOKEN_" + i + "___", preservedTokens[i], "g");
+        content = content.replace(___PRESERVED_TOKEN_ + i + "___", preservedTokens[i], "g");
     }
 
     // restore preserved newlines
