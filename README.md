@@ -49,6 +49,7 @@ Options are identical to the command line:
 * `<bool> expandVars` for `--expand-vars`
 * `<bool> uglyComments` for `--ugly-comments`
 * `<bool> cuteComments` for `--cute-comments`
+* `<string> convertUrls` for `--convert-urls d`
 
 Both functions return uglified css.
 
