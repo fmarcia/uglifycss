@@ -809,7 +809,7 @@ function processFiles(filenames, options) {
                 uglies.push(processString(content, options));
             }
         } catch (e) {
-            console.error('unable to process "' + filename + '" with ' + e);
+            console.error('uglifycss: unable to process "' + filename + '"\n' + e.stack);
             process.exit(1);
         }
     }
