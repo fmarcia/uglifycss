@@ -37,7 +37,7 @@ function usage() {
         "--expand-vars     expand variables\n" +
         "--ugly-comments   remove newlines within preserved comments\n" +
         "--cute-comments   preserve newlines within and around preserved comments\n" +
-        "--convert-urls d  convert relative urls according to the d directory"
+        "--convert-urls d  convert relative urls with the d directory as css location"
     );
 }
 
