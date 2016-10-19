@@ -114,7 +114,7 @@ function convertRelativeUrls(css, options, preservedTokens) {
                     terminator = "";
                 }
 
-                if (options.convertUrls && token.charAt(0) !== "/") {
+                if (options.convertUrls && token.charAt(0) !== SEP && token.slice(0, 7) !== "http://" && token.slice(0, 8) !== "https://") {
 
                     // build path of detected urls
                     target = options.target.slice();
