@@ -38,7 +38,8 @@ var defaultOptions = {
     expandVars: false,
     uglyComments: false,
     cuteComments: false,
-    convertUrls: ""
+    convertUrls: "",
+    debug: false
 };
 
 /**
@@ -809,7 +810,11 @@ function processFiles(filenames, options) {
                 uglies.push(processString(content, options));
             }
         } catch (e) {
-            console.error('uglifycss: unable to process "' + filename + '"\n' + e.stack);
+            if (options.debug) {
+                console.error('uglifycss: unable to process "' + filename + '"\n' + e.stack);
+            } else {
+                console.error('uglifycss: unable to process "' + filename + '"\n\t' + e);
+            }
             process.exit(1);
         }
     }

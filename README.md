@@ -33,7 +33,8 @@ Options:
 * `--expand-vars` expands variables; by default, `@variables` blocks are preserved and `var(x)`s are not expanded
 * `--ugly-comments` removes newlines within preserved comments; by default, newlines are preserved
 * `--cute-comments` preserves newlines within and around preserved comments
-* `--convert-urls d` convert relative urls with the `d` directory as css location
+* `--convert-urls d` converts relative urls with the `d` directory as css location
+* `--debug` prints full error stack on error
 
 If no file name is specified, input is read from stdin.
 
@@ -50,6 +51,7 @@ Options are identical to the command line:
 * `<bool> uglyComments` for `--ugly-comments`
 * `<bool> cuteComments` for `--cute-comments`
 * `<string> convertUrls` for `--convert-urls d`
+* `<bool> debug` for `--debug`
 
 Both functions return uglified css.
 
