@@ -129,7 +129,9 @@ function convertRelativeUrls(css, options, preservedTokens) {
                         url.shift();
                     }
 
-                    target.fill("..");
+                    for (var i = 0, l = target.length; i < l; ++i) {
+                        target[i] = "..";
+                    }
                     url = terminator + target.concat(url, file).join(SEP) + terminator;
 
                 } else {
