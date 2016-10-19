@@ -1,0 +1,8 @@
+a {
+    cursor: url(img/jkl.jpg);
+    cursor: url(../img/jkl.jpg);
+    cursor: url(/img/jkl.jpg);
+    cursor: url(//jkl.io/jkl.jpg);
+    cursor: url(http://jkl.io/jkl.jpg);
+    cursor: url(https://jkl.io/jkl.jpg);
+}

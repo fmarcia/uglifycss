@@ -1,0 +1,11 @@
+div.base64-noquotes {
+    background-image:url(data:image/jpeg;base64,%2F9j%2F4AAQSkZJRgABAgEAZABkAAD%2F4RfJRXhpZgAATU0AKgAAA);
+    background-position:center center;
+    border:1px solid #00aa00;
+}
+
+.ghi {
+    cursor: url(
+        "../img/ghi.jpg"
+    );
+}
