@@ -27,6 +27,7 @@
  */
 
 var uglifycss = require("./");
+var fs = require("fs");
 
 // Print usage
 function usage() {
@@ -37,8 +38,9 @@ function usage() {
         "--expand-vars     expand variables\n" +
         "--ugly-comments   remove newlines within preserved comments\n" +
         "--cute-comments   preserve newlines within and around preserved comments\n" +
-        "--convert-urls d  convert relative urls with the d directory as css location\n" +
-        "--debug           print full error stack on error"
+        "--convert-urls d  convert relative urls using the d directory as location target\n" +
+        "--debug           print full error stack on error" +
+        "--output f        put the result in f file"
     );
 }
 
@@ -90,13 +92,17 @@ function parseArguments(argv) {
 (function main() {
 
     var params = parseArguments(process.argv);
-    var nFiles = params.files.length;
     var stdin = process.stdin;
     var content = "";
 
     // . files
-    if (nFiles) {
-        console.log(uglifycss.processFiles(params.files, params.options));
+    if (params.files.length) {
+        var result = uglifycss.processFiles(params.files, params.options);
+        if (params.options.output) {
+            fs.writeFileSync(params.options.output, result);
+        } else {
+            console.log(result);
+        }
 
     // . usage
     } else if (stdin.isTTY) {

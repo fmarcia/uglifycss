@@ -39,7 +39,8 @@ var defaultOptions = {
     uglyComments: false,
     cuteComments: false,
     convertUrls: "",
-    debug: false
+    debug: false,
+    output: ""
 };
 
 /**

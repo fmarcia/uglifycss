@@ -33,8 +33,9 @@ Options:
 * `--expand-vars` expands variables; by default, `@variables` blocks are preserved and `var(x)`s are not expanded
 * `--ugly-comments` removes newlines within preserved comments; by default, newlines are preserved
 * `--cute-comments` preserves newlines within and around preserved comments
-* `--convert-urls d` converts relative urls with the `d` directory as css location
+* `--convert-urls d` convert relative urls using the `d` directory as location target
 * `--debug` prints full error stack on error
+* `--output` put the result in `f` file
 
 If no file name is specified, input is read from stdin.
 
