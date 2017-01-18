@@ -34,7 +34,7 @@ function usage() {
     console.log(
         "Usage: uglifycss [options] file1.css [file2.css [...]] > output\n" +
         "options:\n" +
-        "--max-line-len x  add a newline every x characters\n" +
+        "--max-line-len n  add a newline every n characters\n" +
         "--expand-vars     expand variables\n" +
         "--ugly-comments   remove newlines within preserved comments\n" +
         "--cute-comments   preserve newlines within and around preserved comments\n" +
