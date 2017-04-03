@@ -588,6 +588,17 @@ function processString(content, options) {
         return f1 + ":" + f2;
     });
 
+    // preserve 0 followed by unit for flex and flex-basis (ie10 bug)
+    pattern = /\s*(flex|flex-basis):\s*([^;}]+)/gi;
+    content = content.replace(pattern, function (ignore, f1, f2) {
+        f2 = f2.replace(/(^|\D)0?\.?0([\D]+)/gi, function (ignore, g1, g2) {
+            preservedTokens.push('0' + g2);
+            return g1 + ___PRESERVED_TOKEN_ + (preservedTokens.length - 1) + "___";
+        });
+
+        return f1 + ":" + f2;
+    });
+
     // preserve 0% in hsl and hsla color definitions
     content = content.replace(/(hsla?)\(([^)]+)\)/g, function (ignore, f1, f2) {
         var f0 = [];
