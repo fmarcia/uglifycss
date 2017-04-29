@@ -39,7 +39,7 @@ function usage() {
         "--ugly-comments   remove newlines within preserved comments\n" +
         "--cute-comments   preserve newlines within and around preserved comments\n" +
         "--convert-urls d  convert relative urls using the d directory as location target\n" +
-        "--debug           print full error stack on error" +
+        "--debug           print full error stack on error\n" +
         "--output f        put the result in f file"
     );
 }
