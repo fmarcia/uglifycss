@@ -29,7 +29,7 @@
 var uglifycss = require("./");
 var fs = require("fs");
 
-var UGLIFYCSS_VERSION = "0.0.26";
+var UGLIFYCSS_VERSION = "0.0.27";
 
 // Print usage
 function usage() {
