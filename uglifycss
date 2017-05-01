@@ -29,6 +29,8 @@
 var uglifycss = require("./");
 var fs = require("fs");
 
+var UGLIFYCSS_VERSION = "0.0.26";
+
 // Print usage
 function usage() {
     console.log(
@@ -40,8 +42,15 @@ function usage() {
         "--cute-comments   preserve newlines within and around preserved comments\n" +
         "--convert-urls d  convert relative urls using the d directory as location target\n" +
         "--debug           print full error stack on error\n" +
-        "--output f        put the result in f file"
+        "--output f        put the result in f file\n" +
+        "--help            show this help\n" +
+        "--version         display version number"
     );
+}
+
+// Print version
+function version() {
+    console.log("uglifycss " + UGLIFYCSS_VERSION);
 }
 
 // Transform strings like "the-parameter" to "theParameter"
@@ -79,6 +88,16 @@ function parseArguments(argv) {
             params.options[v] = parseInt(argv[i + 1], 10);
             i += 1;
 
+        // help
+        } else if (argv[i] === "--help") {
+            usage();
+            return "help";
+
+        // version
+        } else if (argv[i] === "--version") {
+            version();
+            return "version";
+
         // file
         } else {
             params.files.push(argv[i]);
@@ -92,6 +111,11 @@ function parseArguments(argv) {
 (function main() {
 
     var params = parseArguments(process.argv);
+
+    if (params === "help" || params === "version") {
+        return;
+    }
+
     var stdin = process.stdin;
     var content = "";
 
