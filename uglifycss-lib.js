@@ -29,9 +29,38 @@
 var fs = require('fs');
 var path = require('path');
 
+/**
+ * @type {string} - Output path separator
+ */
+
 var SEP = "/";
+
+/**
+ * @type {string} - System path separator
+ */
+
 var PATH_SEP = path.sep;
+
+/**
+ * @type {string} - placeholder prefix
+ */
+
 var ___PRESERVED_TOKEN_ = "___PRESERVED_TOKEN_";
+
+/**
+ * @typedef {object} options - UglifyCSS options
+ * @property {number} [maxLineLen=0] - Maximum line length of uglified CSS
+ * @property {boolean} [expandVars=false] - Expand variables
+ * @property {boolean} [uglyComments=false] - Removes newlines within preserved comments
+ * @property {boolean} [cuteComments=false] - Preserves newlines within and around preserved comments
+ * @property {string} [convertUrls=""] - Converts relative urls using the given directory as location target
+ * @property {boolean} [debug=false] - Prints full error stack on error
+ * @property {string} [output=""] - Output file name
+ */
+
+/**
+ * @type {options} - UglifyCSS options
+ */
 
 var defaultOptions = {
     maxLineLen: 0,
@@ -44,16 +73,16 @@ var defaultOptions = {
 };
 
 /**
- * Utility method to convert relative urls and replace them with tokens before
- * we start compressing. It must be called *after* extractDataUrls
+ * convertRelativeUrls converts relative urls and replaces them with tokens
+ * before we start compressing. It must be called *after* extractDataUrls
  *
- * @private
- * @function convertRelativeUrls
- * @param {String} css The input css
- * @param {Object} options Options
- * @param {Array} The global array of tokens to preserve
- * @returns String The processed css
+ * @param {string} css - CSS content
+ * @param {options} options - UglifyCSS Options
+ * @param {string[]} preservedTokens - Global array of tokens to preserve
+ *
+ * @return {string} Processed css
  */
+
 function convertRelativeUrls(css, options, preservedTokens) {
 
     var maxIndex = css.length - 1,
@@ -163,16 +192,16 @@ function convertRelativeUrls(css, options, preservedTokens) {
 }
 
 /**
- * Utility method to replace all data urls with tokens before we start
+ * extractDataUrls replaces all data urls with tokens before we start
  * compressing, to avoid performance issues running some of the subsequent
  * regexes against large strings chunks.
  *
- * @private
- * @function extractDataUrls
- * @param {String} css The input css
- * @param {Array} The global array of tokens to preserve
- * @returns String The processed css
+ * @param {string} css - CSS content
+ * @param {string[]} preservedTokens - Global array of tokens to preserve
+ *
+ * @return {string} Processed CSS
  */
+
 function extractDataUrls(css, preservedTokens) {
 
     // Leave data urls alone to increase parse performance.
@@ -252,22 +281,21 @@ function extractDataUrls(css, preservedTokens) {
 }
 
 /**
- * Utility method to compress hex color values of the form #AABBCC to #ABC.
+ * compressHexColors compresses hex color values of the form #AABBCC to #ABC.
  *
- * DOES NOT compress CSS ID selectors which match the above pattern (which would break things).
- * e.g. #AddressForm { ... }
+ * DOES NOT compress CSS ID selectors which match the above pattern (which would
+ * break things), like #AddressForm { ... }
  *
- * DOES NOT compress IE filters, which have hex color values (which would break things).
- * e.g. filter: chroma(color="#FFFFFF");
+ * DOES NOT compress IE filters, which have hex color values (which would break
+ * things), like chroma(color="#FFFFFF");
  *
- * DOES NOT compress invalid hex values.
- * e.g. background-color: #aabbccdd
+ * DOES NOT compress invalid hex values, like background-color: #aabbccdd
  *
- * @private
- * @function compressHexColors
- * @param {String} css The input css
- * @returns String The processed css
+ * @param {string} css - CSS content
+ *
+ * @return {string} Processed CSS
  */
+
 function compressHexColors(css) {
 
     // Look for hex colors inside { ... } (to avoid IDs) and which don't have a =, or a " in front of them (to avoid filters)
@@ -307,7 +335,13 @@ function compressHexColors(css) {
     return sb.join("");
 }
 
-// Preserve 0 followed by unit in keyframes steps
+/** keyframes preserves 0 followed by unit in keyframes steps
+ *
+ * @param {string} content - CSS content
+ * @param {string[]} preservedTokens - Global array of tokens to preserve
+ *
+ * @return {string} Processed CSS
+ */
 
 function keyframes(content, preservedTokens) {
 
@@ -393,8 +427,14 @@ function keyframes(content, preservedTokens) {
     return content;
 }
 
-// Collect all comment blocks and return new content with comment placeholders
-// (comments is an array thus passed by reference)
+/**
+ * collectComments collects all comment blocks and return new content with comment placeholders
+ *
+ * @param {string} content - CSS content
+ * @param {string[]} comments - Global array of extracted comments
+ *
+ * @return {string} Processed CSS
+ */
 
 function collectComments(content, comments) {
     var table = [];
@@ -422,7 +462,14 @@ function collectComments(content, comments) {
     return table.join("");
 }
 
-// Uglify a CSS string
+/**
+ * processString uglifies a CSS string
+ *
+ * @param {string} content - CSS string
+ * @param {options} options - UglifyCSS options
+ *
+ * @return {string} Uglified result
+ */
 
 function processString(content, options) {
 
@@ -795,7 +842,14 @@ function processString(content, options) {
     return content;
 }
 
-// Uglify CSS files
+/**
+ * processFiles uglifies a set of CSS files
+ *
+ * @param {string[]} filenames - List of filenames
+ * @param {options} options - UglifyCSS options
+ *
+ * @return {string} Uglified result
+ */
 
 function processFiles(filenames, options) {
 
