@@ -22,6 +22,7 @@ else
 fi
 
 printf "current path: "
+mkdir -p tests-url/assets/css
 cd tests-url/assets/css
 ../../../uglifycss --convert-urls ../../assets/css ../../ghi/css/ghi.css ../../sub/abc/css/abc.css ../../sub/def/sub/css/def.css ../../jkl/jkl.css > $TMPFILE
 diff ../../tests-url.css.min $TMPFILE
@@ -30,5 +31,7 @@ if [ "$?" == "0" ]; then
 else
     echo KO
 fi
+cd ../../..
+rm -r tests-url/assets
 
 rm $TMPFILE 2> /dev/null
