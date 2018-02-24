@@ -1,48 +1,42 @@
-#! /usr/bin/env node
+#!/usr/bin/env node
 
-"use strict";
+const { processFiles } = require('./');
+const { readdirSync, unlinkSync, readFileSync, writeFileSync } = require('fs');
 
 // path to yui tests
-var PATH = "./tests-yui";
+const PATH = './tests-yui';
 
-// dependancies
-var fs = require("fs");
-var uglifycss = require("./");
-
-// trim results (some ref minified files got trailing new lines)
-function trim(str) {
-    return str.toString().replace(/(^\s*|\s*$)/g, "");
-}
-
-// get sorted files list and init counters
-var files = fs.readdirSync(PATH).sort();
-var failed = 0;
-var total = 0;
+// get sorted files list
+const files = readdirSync(PATH).sort();
 
 // remove previous failures
-files.forEach(function (file) {
+files.forEach(file => {
     if (/\.FAILED$/.test(file)) {
-        fs.unlink(PATH + "/" + file);
+        unlinkSync(`${PATH}/${file}`);
     }
 });
+
+// init counters
+let failed = 0;
+let done = 0;
 
 // check files
-files.forEach(function (file) {
-    file = PATH + "/" + file;
+files.forEach(file => {
+    file = `${PATH}/${file}`;
     if (/\.css$/.test(file)) {
-        var ugly = uglifycss.processFiles([ file ]);
-        if (trim(ugly) !== trim(fs.readFileSync(file + ".min"))) {
-            console.log(file + ": FAILED");
-            fs.writeFile(file + ".FAILED", ugly);
+        const ugly = processFiles([ file ]);
+        if (ugly.trim() !== readFileSync(`${file}.min`, 'utf8').trim()) {
+            console.log(`${file}: FAILED`);
+            writeFileSync(`${file}.FAILED`, ugly);
             failed += 1;
         }
-        total += 1;
+        done += 1;
     }
 });
 
-// report total
+// report
 if (failed) {
-    console.log(total + " tests, " + failed + " failed");
+    console.log(`${done} tests, ${failed} failed`);
 } else {
-    console.log(total + " tests, no failure!");
+    console.log(`${done} tests, no failure!`);
 }

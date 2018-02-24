@@ -24,28 +24,27 @@
  * by Yahoo! Inc. under the BSD (revised) open source license.
  */
 
-'use strict';
 
-var fs = require('fs');
-var path = require('path');
+const { readFileSync } = require('fs');
+const { sep, resolve } = require('path');
 
 /**
  * @type {string} - Output path separator
  */
 
-var SEP = "/";
+const SEP = '/';
 
 /**
  * @type {string} - System path separator
  */
 
-var PATH_SEP = path.sep;
+const PATH_SEP = sep;
 
 /**
  * @type {string} - placeholder prefix
  */
 
-var ___PRESERVED_TOKEN_ = "___PRESERVED_TOKEN_";
+const ___PRESERVED_TOKEN_ = '___PRESERVED_TOKEN_';
 
 /**
  * @typedef {object} options - UglifyCSS options
@@ -62,7 +61,7 @@ var ___PRESERVED_TOKEN_ = "___PRESERVED_TOKEN_";
  * @type {options} - UglifyCSS options
  */
 
-var defaultOptions = {
+const defaultOptions = {
     maxLineLen: 0,
     expandVars: false,
     uglyComments: false,
@@ -149,7 +148,7 @@ function convertRelativeUrls(css, options, preservedTokens) {
                     // build path of detected urls
                     target = options.target.slice();
                     token = token.split(SEP).join(PATH_SEP); // assuming urls in css use "/"
-                    url = path.resolve(options.source.join(PATH_SEP), token).split(PATH_SEP);
+                    url = resolve(options.source.join(PATH_SEP), token).split(PATH_SEP);
 
                     file = url.pop();
 
@@ -853,46 +852,40 @@ function processString(content, options) {
 
 function processFiles(filenames, options) {
 
-    var nFiles = filenames.length,
-        uglies = [],
-        index,
-        filename,
-        content;
-
     options = options || defaultOptions;
-
     if (options.convertUrls) {
-        options.target = path.resolve(process.cwd(), options.convertUrls).split(PATH_SEP);
+        options.target = resolve(process.cwd(), options.convertUrls).split(PATH_SEP);
     }
 
+    const uglies = [];
+
     // process files
-    for (index = 0; index < nFiles; index += 1) {
-        filename = filenames[index];
+    filenames.forEach(filename => {
         try {
-            content = fs.readFileSync(filename, 'utf8');
+            const content = readFileSync(filename, 'utf8');
             if (content.length) {
                 if (options.convertUrls) {
-                    options.source = path.resolve(process.cwd(), filename).split(PATH_SEP);
+                    options.source = resolve(process.cwd(), filename).split(PATH_SEP);
                     options.source.pop();
                 }
                 uglies.push(processString(content, options));
             }
         } catch (e) {
             if (options.debug) {
-                console.error('uglifycss: unable to process "' + filename + '"\n' + e.stack);
+                console.error(`uglifycss: unable to process "${filename}"\n${e.stack}`);
             } else {
-                console.error('uglifycss: unable to process "' + filename + '"\n\t' + e);
+                console.error(`uglifycss: unable to process "${filename}"\n\t${e}`);
             }
             process.exit(1);
         }
-    }
+    });
 
     // return concat'd results
     return uglies.join('');
 }
 
 module.exports = {
-    defaultOptions: defaultOptions,
-    processString: processString,
-    processFiles: processFiles
+    defaultOptions,
+    processString,
+    processFiles
 };
