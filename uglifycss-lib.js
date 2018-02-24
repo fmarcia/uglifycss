@@ -521,7 +521,7 @@ function processString(content, options) {
         // so push to the preserved tokens keeping the !
         if (token.charAt(0) === "!") {
             if (options.cuteComments) {
-                preservedTokens.push(token.substring(1));
+                preservedTokens.push(token.substring(1).replace(/\r\n/g, '\n'));
             } else if (options.uglyComments) {
                 preservedTokens.push(token.substring(1).replace(/[\r\n]/g, ''));
             } else {
