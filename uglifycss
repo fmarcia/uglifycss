@@ -137,6 +137,9 @@ const parseArguments = argv => {
     }
 
     // stdin
+    if (params.options.convertUrls) {
+        return console.error('uglifycss: stdin input and --convert-urls are not compatible');
+    }
     let content = '';
     process.stdin.on('data', part => content += part);
     process.stdin.on('end', _ =>
