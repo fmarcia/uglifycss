@@ -622,11 +622,10 @@ function processString(content, options) {
     // preserve 0 followed by unit for flex and flex-basis (ie10 bug)
     pattern = /\s*(flex|flex-basis):\s*([^;}]+)/gi;
     content = content.replace(pattern, (_, f1, f2) => {
-        f2 = f2.replace(/(^|\D)0?\.?0([\D]+)/gi, (_, g1, g2) => {
+        f2 = f2.replace(/(^|\D|\S)0?\.?0([\D\S]+)/gi, (_, g1, g2) => {
             preservedTokens.push('0' + g2);
             return g1 + ___PRESERVED_TOKEN_ + (preservedTokens.length - 1) + '___';
         });
-
         return f1 + ':' + f2;
     });
 
