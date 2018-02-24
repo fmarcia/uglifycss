@@ -26,13 +26,13 @@
  * by Yahoo! Inc. under the BSD (revised) open source license.
  */
 
-const { defaultOptions, processString, processFiles } = require('./');
-const { writeFileSync } = require('fs');
+const { defaultOptions, processString, processFiles } = require('./')
+const { writeFileSync } = require('fs')
 
-const UGLIFYCSS_VERSION = '0.0.27';
+const UGLIFYCSS_VERSION = '0.0.27'
 
 // Info namespace
-const info = {};
+const info = {}
 
 // Print usage
 info.help = _ => {
@@ -48,14 +48,14 @@ info.help = _ => {
         --output f        put the result in f file
         --help            show this help
         --version         display version number`
-        .replace(/\n\s+/g, '\n').trim()
-    );
-};
+        .replace(/^\s+/gm, '')
+    )
+}
 
 // Print version
 info.version = _ => {
-    console.log(`uglifycss ${UGLIFYCSS_VERSION}`);
-};
+    console.log(`uglifycss ${UGLIFYCSS_VERSION}`)
+}
 
 // Transform strings like "the-parameter" to "theParameter"
 const par2var = param =>
@@ -63,7 +63,7 @@ const par2var = param =>
         /-(.)/g,
         (_, ch) => ch === '-' ? '' : ch.toUpperCase()
     )
-;
+
 
 // Parse parameters from command line
 const parseArguments = argv => {
@@ -71,78 +71,78 @@ const parseArguments = argv => {
     const params = {
         options: defaultOptions,
         files: []
-    };
+    }
 
-    const len = argv.length;
+    const len = argv.length
 
     for (let i = 2; i < len; i += 1) {
 
         // get "propertyName" from "--argument-name"
-        let v = par2var(argv[i]);
+        let v = par2var(argv[i])
 
         // boolean parameters
         if (typeof params.options[v] === 'boolean') {
-            params.options[v] = true;
+            params.options[v] = true
 
         // string parameter
         } else if (typeof params.options[v] === 'string') {
-            params.options[v] = argv[i + 1] || '';
-            i += 1;
+            params.options[v] = argv[i + 1] || ''
+            i += 1
 
         // integer parameter
         } else if (typeof params.options[v] !== 'undefined') {
-            params.options[v] = parseInt(argv[i + 1], 10);
-            i += 1;
+            params.options[v] = parseInt(argv[i + 1], 10)
+            i += 1
 
         // help
         } else if (argv[i] === '--help') {
-            return 'help';
+            return 'help'
 
         // version
         } else if (argv[i] === '--version') {
-            return 'version';
+            return 'version'
 
         // file
         } else {
-            params.files.push(argv[i]);
+            params.files.push(argv[i])
         }
     }
 
-    return params;
-};
+    return params
+}
 
 // Entry
 {
     // parameters
-    const params = parseArguments(process.argv);
+    const params = parseArguments(process.argv)
 
     // info
     if (params === 'help' || params === 'version') {
-        return info[params]();
+        return info[params]()
     }
 
     // files
     if (params.files.length) {
-        const ugly = processFiles(params.files, params.options);
+        const ugly = processFiles(params.files, params.options)
         if (params.options.output) {
-            return writeFileSync(params.options.output, ugly);
+            return writeFileSync(params.options.output, ugly)
         } else {
-            return console.log(ugly);
+            return console.log(ugly)
         }
     }
 
     // no file, no stdin: help
     if (process.stdin.isTTY) {
-        return info.help();
+        return info.help()
     }
 
     // stdin
     if (params.options.convertUrls) {
-        return console.error('uglifycss: stdin input and --convert-urls are not compatible');
+        return console.error('uglifycss: stdin input and --convert-urls are not compatible')
     }
-    let content = '';
-    process.stdin.on('data', part => content += part);
+    let content = ''
+    process.stdin.on('data', part => content += part)
     process.stdin.on('end', _ =>
         console.log(processString(content, params.options))
-    );
+    )
 }

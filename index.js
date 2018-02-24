@@ -24,4 +24,4 @@
  * by Yahoo! Inc. under the BSD (revised) open source license.
  */
 
-module.exports = require('./uglifycss-lib');
+module.exports = require('./uglifycss-lib')
