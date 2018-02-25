@@ -156,7 +156,7 @@ function convertRelativeUrls(css, options, preservedTokens) {
                     for (let i = 0, l = target.length; i < l; ++i) {
                         target[i] = '..'
                     }
-                    url = terminator + target.concat(url, file).join(SEP) + terminator
+                    url = terminator + [ ...target, ...url, file].join(SEP) + terminator
 
                 } else {
                     url = terminator + token + terminator
@@ -468,14 +468,13 @@ function collectComments(content, comments) {
  * @return {string} Uglified result
  */
 
-function processString(content, options) {
+function processString(content = '', options = defaultOptions) {
 
     const comments = []
     const preservedTokens = []
 
     let pattern
 
-    options = options || defaultOptions
     content = extractDataUrls(content, preservedTokens)
     content = convertRelativeUrls(content, options, preservedTokens)
     content = collectComments(content, comments)
@@ -818,9 +817,8 @@ function processString(content, options) {
  * @return {string} Uglified result
  */
 
-function processFiles(filenames, options) {
+function processFiles(filenames = [], options = defaultOptions) {
 
-    options = options || defaultOptions
     if (options.convertUrls) {
         options.target = resolve(process.cwd(), options.convertUrls).split(PATH_SEP)
     }
