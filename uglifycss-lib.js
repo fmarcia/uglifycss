@@ -601,7 +601,7 @@ function processString(content = '', options = defaultOptions) {
     content = content.replace(/\s+([!{};:>+\(\)\],])/g, '$1')
 
     //add removed spaces for `not(`, `and(`, `or(`
-    content = content.replace(/not\(/g, 'not (');
+    content = content.replace(/(?!:)\s+not\(/g, ' not (');
     content = content.replace(/and\(/g, 'and (');
     content = content.replace(/or\(/g, 'or (');
 
