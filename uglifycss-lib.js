@@ -597,6 +597,10 @@ function processString(content = '', options = defaultOptions) {
     pattern = /(^|\})(([^\{:])+:)+([^\{]*\{)/g
     content = content.replace(pattern, token => token.replace(/:/g, '___PSEUDOCLASSCOLON___'))
 
+    //add removed spaces for `not(` and `and(`
+    content = content.replace(/not\(/g, 'not (');
+    content = content.replace(/and\(/g, 'and (');
+
     // remove spaces before the things that should not have spaces before them.
     content = content.replace(/\s+([!{};:>+\(\)\],])/g, '$1')
 
