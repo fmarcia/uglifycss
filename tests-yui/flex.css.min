@@ -1,1 +1,1 @@
-a{flex:2 2 0%;flex-basis:0px;flex:0 0 0%;-webkit-flex:1 1 0%;flex:1 0 0%}
+a{flex:2 2 0%;flex-basis:0px;flex:0 0 0%;-webkit-flex:1 1 0%;flex:1 0 0%;flex:1 0 100%;flex:0 0 80%;flex-basis:0%;flex-basis:100%;flex-basis:1000px}
