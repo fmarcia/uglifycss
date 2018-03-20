@@ -9,6 +9,7 @@
         "uglify",
         "minify"
     ],
+    "engines": { "node": ">=6.4.0" },
     "license": "MIT",
     "homepage": "https://github.com/fmarcia/UglifyCSS",
     "repository": {
