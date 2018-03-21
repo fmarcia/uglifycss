@@ -29,7 +29,7 @@
 const { defaultOptions, processString, processFiles } = require('./')
 const { writeFileSync } = require('fs')
 
-const UGLIFYCSS_VERSION = '0.0.28'
+const UGLIFYCSS_VERSION = '0.0.29'
 
 // Info namespace
 const info = {}
