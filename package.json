@@ -11,10 +11,11 @@
     ],
     "engines": { "node": ">=6.4.0" },
     "license": "MIT",
-    "homepage": "https://github.com/fmarcia/UglifyCSS",
+    "homepage": "https://github.com/fmarcia/uglifycss",
+    "bugs": "https://github.com/fmarcia/uglifycss/issues",
     "repository": {
         "type": "git",
-        "url": "git://github.com/fmarcia/UglifyCSS.git"
+        "url": "git://github.com/fmarcia/uglifycss.git"
     },
     "main": "./index.js",
     "bin": {
