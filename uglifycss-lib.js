@@ -600,6 +600,11 @@ function processString(content = '', options = defaultOptions) {
     // remove spaces before the things that should not have spaces before them.
     content = content.replace(/\s+([!{};:>+\(\)\],])/g, '$1')
 
+    //add removed spaces for `not(`, `and(`, `or(`
+    content = content.replace(/\s+not\(/g, ' not (');
+    content = content.replace(/and\(/g, 'and (');
+    content = content.replace(/or\(/g, 'or (');
+
     // restore spaces for !important
     content = content.replace(/!important/g, ' !important')
 
