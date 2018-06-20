@@ -846,8 +846,17 @@ function processFiles(filenames = [], options = defaultOptions) {
         }
     })
 
-    // return concat'd results
-    return uglies.join('')
+    // Remove @charset for other files, except the first one
+    let pattern = /@charset[^;]+;/g;
+    const CHARSET_UTF8 = '@charset "utf-8;';
+    return uglies.map((item, n) => {
+        if (n === 0) {
+            let isHasCharset = uglies[0].match(pattern) || [];
+            return !isHasCharset[0] ? CHARSET_UTF8+item : item;
+        } else {
+            return item.replace(pattern, "");
+        }
+    }).join('');  // return concat'd results
 }
 
 module.exports = {
